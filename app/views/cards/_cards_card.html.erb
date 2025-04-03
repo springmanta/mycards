@@ -1,2 +1,6 @@
-<p><strong><%= card.name %></strong> | <%= card.card_type %> | CMC: <%= card.convertedManaCost %></p>
-<%= image_tag card.photo_url %>
+<div class="card">
+  <%= image_tag card.photo_url %>
+  <p><strong><%= card.name %></strong>
+  <p><%= card.card_type %></p>
+  <p>CMC: <%= card.convertedManaCost %></p>
+</div>

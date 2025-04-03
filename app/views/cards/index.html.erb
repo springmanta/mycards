@@ -1,6 +1,5 @@
-<h1>MyCards</h1>
-<ul>
+<div class="cards-container">
   <% @cards.each do |card| %>
     <%= render "cards_card", card: card %>
   <% end %>
-</ul>
+</div>
