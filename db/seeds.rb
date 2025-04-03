@@ -18,7 +18,7 @@ force_of_will = Card.new(
   convertedManaCost: 5,
   name: "Force of Will",
   card_type: "Instant",
-  photo_url: "https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=3107&type=card"
+  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0OWShaP-sYORlvGQeteuYcDZUi3yuZe66oA&s"
 )
 force_of_will.save
 puts "Successfully created #{force_of_will.name}\n"

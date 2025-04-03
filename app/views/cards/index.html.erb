@@ -1,6 +1,6 @@
 <h1>MyCards</h1>
 <ul>
   <% @cards.each do |card| %>
-    <li><%= card.name %></li>
+    <%= render "cards_card", card: card %>
   <% end %>
 </ul>
