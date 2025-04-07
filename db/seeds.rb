@@ -48,7 +48,7 @@ swords = Card.new(
   convertedManaCost: 1,
   name: "Swords to Plowshares",
   card_type: "Instant",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
+  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8UTc71qvpSAe03BpRT36rh0JVcItPqMwTWA&s"
 )
 swords.save
 puts "Successfully created #{swords.name}\n"
@@ -58,27 +58,17 @@ rhystic = Card.new(
   convertedManaCost: 3,
   name: "Rhystic Study",
   card_type: "Enchantment",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
+  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyCl_fb8hA81X7_afoTax-4bMJvurVeqOvBw&s"
 )
 rhystic.save
 puts "Successfully created #{rhystic.name}\n"
-
-teferi = Card.new(
-  colors: "Blue White",
-  convertedManaCost: 3,
-  name: "Teferi, Time Raveler",
-  card_type: "Legendary Planeswalker",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
-)
-teferi.save
-puts "Successfully created #{teferi.name}\n"
 
 mox = Card.new(
   colors: "Colorless",
   convertedManaCost: 0,
   name: "Mox Diamond",
   card_type: "Artifact",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
+  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3lur86arcGYpfGO9YqlZsMMWYwmejw_LLdA&s"
 )
 mox.save
 puts "Successfully created #{mox.name}\n"
@@ -88,20 +78,10 @@ ring = Card.new(
   convertedManaCost: 4,
   name: "The One Ring",
   card_type: "Artifact",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
+  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3QfspiMij7_KHXqpoUZzP2j_dGGvAR8PKJA&s"
 )
 ring.save
 puts "Successfully created #{ring.name}\n"
-
-battle = Card.new(
-  colors: "Green",
-  convertedManaCost: 2,
-  name: "Invasion of Ikoria",
-  card_type: "Battle",
-  photo_url: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1r7v2xXk4g3a5bqj8J6WcYwz1Zl4m0nq2Gg&s"
-)
-battle.save
-puts "Successfully created #{battle.name}\n"
 
 puts "Successfully created #{Card.count} cards"
 puts "Seeding ended."

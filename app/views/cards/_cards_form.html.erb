@@ -1,0 +1,20 @@
+<div class="cards-form">
+  <%= simple_form_for @card, html: { class: 'simple-form' } do |f| %>
+  <div class="input">
+    <%= f.input :name, input_html: { class: 'input' } %>
+  </div>
+  <div class="input">
+    <%= f.input :colors, input_html: { class: 'input' } %>
+  </div>
+  <div class="input">
+    <%= f.input :card_type, input_html: { class: 'input' } %>
+  </div>
+  <div class="input">
+    <%= f.input :convertedManaCost, input_html: { class: 'input' } %>
+  </div>
+  <div class="input">
+    <%= f.input :photo_url, input_html: { class: 'input' } %>
+  </div>
+    <%= f.button :submit, "Add Card", class: "form-button" %>
+  <% end %>
+</div>

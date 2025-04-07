@@ -1,12 +1,12 @@
 <div class="navbar">
   <h1>MyCards</h1>
   <div class="navbar-right">
-    <button class="add-card-btn">Add New Card</button>
-    <!-- Example Dropdown -->
+    <button class="add-card-btn"> <%= link_to "Add a new card", new_card_path %></button>
+    <button class="dropdown-btn">Filters</button>
     <div class="dropdown">
       <button class="dropdown-btn">Menu</button>
       <div class="dropdown-content">
-        <a href="#">MyCards</a>
+        <%= link_to "My Cards", cards_path %>
         <a href="#">My Decks</a>
         <a href="#">Settings</a>
       </div>
