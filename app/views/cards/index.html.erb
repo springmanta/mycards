@@ -1,3 +1,6 @@
+<div class="container-header">
+  <p><%= pluralize(@cards.count, "card") %> in my collection</p>
+</div>
 <div class="cards-container">
   <% @cards.each do |card| %>
     <%= link_to image_tag(card.photo_url), card_path(card.id) %>

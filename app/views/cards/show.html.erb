@@ -1,6 +1,7 @@
-<div class="card-show">
+<div class="container-header">
+  <p><%= @card.name %></p>
+</div>
+
+<div class="card-show-container">
   <%= render "cards_card", card: @card %>
-  <button> <%= link_to "Back to MyCards", cards_path %> </button>
-  <br>
-  <button> <%= link_to "Delete Card", card_path(@card), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %> </button>
 </div>

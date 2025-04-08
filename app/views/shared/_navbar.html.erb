@@ -1,14 +1,12 @@
 <div class="navbar">
-  <h1>MyCards</h1>
+  <h1><%= link_to "MyCards", cards_path %></h1>
   <div class="navbar-right">
-    <button class="add-card-btn"> <%= link_to "Add a new card", new_card_path %></button>
-    <button class="dropdown-btn">Filters</button>
+    <button class="add-card-btn"> <%= link_to "New card", new_card_path %></button>
+    <button class="dropdown-btn">Filter</button>
     <div class="dropdown">
-      <button class="dropdown-btn">Menu</button>
+      <button class="add-card-btn">Menu</button>
       <div class="dropdown-content">
         <%= link_to "My Cards", cards_path %>
-        <a href="#">My Decks</a>
-        <a href="#">Settings</a>
       </div>
     </div>
   </div>

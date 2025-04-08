@@ -1,5 +1,5 @@
 class CardsController < ApplicationController
-  before_action :set_card, only: [:show, :update, :destroy]
+  before_action :set_card, only: [:show, :edit, :update, :destroy]
 
   def index
     @cards = Card.all
@@ -18,6 +18,13 @@ class CardsController < ApplicationController
       redirect_to @card, notice: 'Card was successfully created.'
     else
       render :new, status: :unprocessable_entity
+    end
+  end
+
+  def edit
+    respond_to do |format|
+      format.html
+      format.js
     end
   end
 

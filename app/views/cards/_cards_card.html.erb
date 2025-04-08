@@ -1,6 +1,18 @@
 <div class="card">
-  <%= link_to image_tag(card.photo_url), card_path(card.id) %>
+  <%= image_tag(card.photo_url) %>
   <p><strong><%= card.name %></strong>
-  <p><%= card.card_type %></p>
-  <p>CMC: <%= card.convertedManaCost %></p>
+  <button class="btn-back"> <%= link_to "Back to MyCards", cards_path %> </button>
+  <button class="btn-edit"> <%= link_to "Edit Card", edit_card_path %></button>
+  <button class="btn-delete"> <%= link_to "Delete Card", card_path(@card), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %> </button>
+</div>
+
+<div class="card-info">
+  <span class="card-info-label">Card Type</span>
+  <span class="card-info-detail"> <%= card.card_type %></span>
+  <p></p>
+  <span class="card-info-label">Converted Mana Cost</span>
+  <span class="card-info-detail"> <%= card.convertedManaCost %></span>
+  <p></p>
+  <span class="card-info-label">Color</span>
+  <span class="card-info-detail"> <%= card.colors %></span>
 </div>
