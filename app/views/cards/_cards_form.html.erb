@@ -1,22 +1,8 @@
 <div class="cards-form">
-  <%= simple_form_for @card, html: { class: 'simple-form' } do |f| %>
-  <%#= f.error_notification %>
-
-  <div class="input">
-    <%= f.input :name, label: "Name (required)", label_html: { class: "card-label" }, input_html: { class: 'input' } %>
-  </div>
-  <div class="input">
-    <%= f.input :colors, label: "Colors", label_html: { class: "card-label" }, as: :select, collection: ["Green", "Black", "Blue", "Red", "White", "Colorless"], input_html: { class: 'form-select' } %>
-  </div>
-  <div class="input">
-    <%= f.input :card_type, label: "Card Type", label_html: { class: "card-label" }, input_html: { class: 'input' } %>
-  </div>
-  <div class="input">
-    <%= f.input :convertedManaCost, label: "Converted Mana Cost", label_html: { class: "card-label" }, input_html: { class: 'input' } %>
-  </div>
-  <div class="input">
-    <%= f.input :photo_url, label: "Image Link", label_html: { class: "card-label" }, input_html: { class: 'input' } %>
-  </div>
-    <%= f.button :submit, "Add Card", class: "form-button" %>
+  <%= simple_form_for :scryfall_search, url: create_from_scryfall_cards_path, method: :post do |f| %>
+    <div class="input">
+      <%= f.input :name, label: "Card Name", input_html: { class: 'input' } %>
+    </div>
+    <%= f.button :submit, "Search and Save Card", class: 'custom-button' %>
   <% end %>
 </div>

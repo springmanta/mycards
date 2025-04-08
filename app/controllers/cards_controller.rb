@@ -12,14 +12,18 @@ class CardsController < ApplicationController
     @card = Card.new
   end
 
-  def create
-    @card = Card.new(card_params)
-    if @card.save
-      redirect_to @card, notice: 'Card was successfully created.'
+  def create_from_scryfall
+    card_name = params.dig(:scryfall_search, :name)
+    @card = Card.from_scryfall(card_name)
+
+    if @card.persisted?
+      redirect_to @card, notice: "Card imported successfully!"
     else
+      flash.now[:alert] = "Could not find card from Scryfall."
       render :new, status: :unprocessable_entity
     end
   end
+
 
   def edit
     respond_to do |format|

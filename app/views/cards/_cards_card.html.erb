@@ -10,9 +10,12 @@
   <span class="card-info-label">Card Type</span>
   <span class="card-info-detail"> <%= card.card_type %></span>
   <p></p>
-  <span class="card-info-label">Converted Mana Cost</span>
-  <span class="card-info-detail"> <%= card.convertedManaCost %></span>
+  <span class="card-info-label">Mana Cost</span>
+  <span class="card-info-detail"> <%= @card.mana_cost %></span>
   <p></p>
   <span class="card-info-label">Color</span>
-  <span class="card-info-detail"> <%= card.colors %></span>
+  <span class="card-info-detail"> <%= @card.colors.map { |c| color_name(c) }.join(", ") %></span>
+  <p></p>
+  <span class="card-info-label">Artist</span>
+  <span class="card-info-detail"> <%= @card.artist %></span>
 </div>

@@ -11,5 +11,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
-  resources :cards
+  resources :cards do
+    collection do
+      post :create_from_scryfall
+    end
+  end
 end

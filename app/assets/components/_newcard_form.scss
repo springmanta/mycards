@@ -8,32 +8,14 @@
 
 .input {
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  width: 400px;
-  padding: 10px;
-  margin: 5px 0;
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
   border-radius: 5px;
   border-color: blueviolet;
   text-align: center;
   color: rgb(126, 114, 201);
-  font-size: 20px;
-}
-
-.form-select {
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  width: 425px;
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  border-color: blueviolet;
-  text-align: center;
-  color: rgb(126, 114, 201);
-  font-size: 20px;
-}
-
-.card-label {
-  margin-bottom: 8px;
-  display: block;
-  font-style: bold;
+  font-size: 30px;
 }
 
 .error_notification {
