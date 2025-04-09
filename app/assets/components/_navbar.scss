@@ -3,7 +3,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 30px;
+  padding-left: 10px;
+  padding-right: 20px;
   background-color: #bad3ec;
   border-bottom: 2px solid rgb(119, 126, 173);
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -11,6 +12,11 @@
   position: sticky;
   top: 0;
   z-index: 1000; /* Ensure it stays above other content */
+
+  img {
+    width: 10%;
+    height: 10%;
+  }
 }
 
 /* Right-side container: includes button and dropdown */

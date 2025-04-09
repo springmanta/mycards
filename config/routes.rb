@@ -10,7 +10,8 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root to: "pages#home"
+  #root "posts#index"
   resources :cards do
     collection do
       post :create_from_scryfall

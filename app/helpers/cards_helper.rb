@@ -5,7 +5,8 @@ module CardsHelper
       "U" => "Blue",
       "B" => "Black",
       "R" => "Red",
-      "G" => "Green"
+      "G" => "Green",
+      "[]" => "Colorless"
     }[code] || code
   end
 end

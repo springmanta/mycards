@@ -1,13 +1,11 @@
 <div class="navbar">
-  <h1><%= link_to "MyCards", cards_path %></h1>
+  <div class="logo">
+    <%= link_to cards_path do %>
+      <%= image_tag "logo.png" %>
+    <% end %>
+  </div>
   <div class="navbar-right">
     <button class="add-card-btn"> <%= link_to "New card", new_card_path %></button>
     <button class="dropdown-btn">Filter</button>
-    <%# <div class="dropdown"> %>
-      <%# <button class="add-card-btn">Menu</button>
-      <div class="dropdown-content"> %>
-        <%#= link_to "My Cards", cards_path %>
-      <%# </div> %>
-    <%# </div> %>
   </div>
 </div>

@@ -1,6 +1,5 @@
 <div class="card">
   <%= image_tag(card.photo_url) %>
-  <p><strong><%= card.name %></strong>
   <button class="btn-back"> <%= link_to "Back to MyCards", cards_path %> </button>
   <button class="btn-edit"> <%= link_to "Edit Card", edit_card_path %></button>
   <button class="btn-delete"> <%= link_to "Delete Card", card_path(@card), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %> </button>
@@ -11,11 +10,14 @@
   <span class="card-info-detail"> <%= card.card_type %></span>
   <p></p>
   <span class="card-info-label">Mana Cost</span>
-  <span class="card-info-detail"> <%= @card.mana_cost %></span>
+  <span class="card-info-detail"> <%= card.mana_cost %></span>
   <p></p>
-  <span class="card-info-label">Color</span>
-  <span class="card-info-detail"> <%= @card.colors.map { |c| color_name(c) }.join(", ") %></span>
+  <span class="card-info-label">Rarity</span>
+  <span class="card-info-detail"> <%= card.rarity.capitalize %></span>
+  <p></p>
+  <span class="card-info-label">Colors</span>
+  <span class="card-info-detail"> <%= card.colors.map { |c| color_name(c) }.join(", ") %></span>
   <p></p>
   <span class="card-info-label">Artist</span>
-  <span class="card-info-detail"> <%= @card.artist %></span>
+  <span class="card-info-detail"> <%= card.artist %></span>
 </div>

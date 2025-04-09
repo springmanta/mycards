@@ -1,5 +1,5 @@
 class Card < ApplicationRecord
-  
+
   def self.from_scryfall(name)
     data = ScryfallApi.new.search_card_by_name(name)
     return nil unless data
@@ -12,7 +12,10 @@ class Card < ApplicationRecord
       colors: data["colors"],
       card_type: data["type_line"],
       photo_url: data.dig("image_uris", "normal"),
-      artist: data["artist"]
+      artist: data["artist"],
+      rarity: data["rarity"],
+      set_name: data["set_name"],
+      oracle_text: data["oracle_text"]
     )
   end
 end
