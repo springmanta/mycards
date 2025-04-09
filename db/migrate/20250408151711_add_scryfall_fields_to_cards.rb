@@ -16,6 +16,5 @@ class AddScryfallFieldsToCards < ActiveRecord::Migration[8.0]
     add_column :cards, :digital, :boolean
     add_column :cards, :full_json, :jsonb
     add_column :cards, :artist, :string
-    add_index  :cards, :scryfall_id, unique: true
   end
 end

@@ -1,5 +1,5 @@
 class CardsController < ApplicationController
-  before_action :set_card, only: [:show, :edit, :update, :destroy]
+  before_action :set_card, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @cards = Card.all
@@ -12,18 +12,17 @@ class CardsController < ApplicationController
     @card = Card.new
   end
 
-  def create_from_scryfall
+  def import
     card_name = params.dig(:scryfall_search, :name)
-    @card = Card.from_scryfall(card_name)
+    @card = CardImporter.import_by_name(card_name)
 
-    if @card.persisted?
+    if @card.present?
       redirect_to @card, notice: "Card imported successfully!"
     else
       flash.now[:alert] = "Could not find card from Scryfall."
       render :new, status: :unprocessable_entity
     end
   end
-
 
   def edit
     respond_to do |format|
@@ -34,7 +33,7 @@ class CardsController < ApplicationController
 
   def update
     if @card.update(card_params)
-      redirect_to @card, notice: 'Card was successfully updated.'
+      redirect_to @card, notice: "Card was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end

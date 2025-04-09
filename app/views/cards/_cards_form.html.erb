@@ -1,5 +1,5 @@
 <div class="cards-form">
-  <%= simple_form_for :scryfall_search, url: create_from_scryfall_cards_path, method: :post do |f| %>
+  <%= simple_form_for :scryfall_search, url: import_card_cards_path, method: :post do |f| %>
     <div class="input">
       <%= f.input :name, label: "Card Name", input_html: { class: 'input' } %>
     </div>

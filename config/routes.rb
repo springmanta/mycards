@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   #root "posts#index"
   resources :cards do
     collection do
-      post :create_from_scryfall
+      post :"cards/import", to: "cards#import", as: :import_card
     end
   end
 end

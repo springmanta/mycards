@@ -18,6 +18,9 @@
   <span class="card-info-label">Colors</span>
   <span class="card-info-detail"> <%= card.colors.map { |c| color_name(c) }.join(", ") %></span>
   <p></p>
+  <span class="card-info-label">Set</span>
+  <span class="card-info-detail"> <%= card.set_name %></span>
+  <p></p>
   <span class="card-info-label">Artist</span>
   <span class="card-info-detail"> <%= card.artist %></span>
 </div>

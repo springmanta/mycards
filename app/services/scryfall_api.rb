@@ -1,7 +1,7 @@
-require 'net/http'
-require 'uri'
-require 'json'
-require 'cgi' # Make sure to require the CGI module
+require "net/http"
+require "uri"
+require "json"
+require "cgi"
 
 class ScryfallApi
   BASE_URL = "https://api.scryfall.com"
@@ -15,7 +15,7 @@ class ScryfallApi
   end
 
   # Fetch card details by name
-  def search_card_by_name(name)
+  def search_cards(name)
     return nil if name.blank? # Prevent error if name is nil or empty
 
     # Using CGI.escape to properly encode the card name
