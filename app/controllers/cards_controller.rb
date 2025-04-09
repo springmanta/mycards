@@ -1,5 +1,5 @@
 class CardsController < ApplicationController
-  before_action :set_card, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_card, only: [ :show, :destroy ]
 
   def index
     @cards = Card.all
@@ -21,21 +21,6 @@ class CardsController < ApplicationController
     else
       flash.now[:alert] = "Could not find card from Scryfall."
       render :new, status: :unprocessable_entity
-    end
-  end
-
-  def edit
-    respond_to do |format|
-      format.html
-      format.js
-    end
-  end
-
-  def update
-    if @card.update(card_params)
-      redirect_to @card, notice: "Card was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
     end
   end
 
