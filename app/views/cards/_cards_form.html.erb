@@ -1,8 +1,18 @@
-<div class="cards-form">
-  <%= simple_form_for :scryfall_search, url: import_card_cards_path, method: :post do |f| %>
-    <div class="input">
-      <%= f.input :name, label: "Card Name", input_html: { class: 'input' } %>
-    </div>
-    <%= f.button :submit, "Search and Save Card", class: 'custom-button' %>
-  <% end %>
-</div>
+<%= simple_form_for :scryfall_search, url: import_cards_path, method: :post, html: { id: "import-form", data: { controller: "card-search" } } do |f| %>
+  <div class="card-search-container">
+    <input type="text"
+           class="card-search-input"
+           data-card-search-target="input"
+           data-action="input->card-search#search"
+           placeholder="Search a card"
+           autocomplete="off" />
+  </div>
+  <div class="search-results-grid" data-card-search-target="results">
+    <!-- JS will populate this with cards -->
+  </div>
+
+  <%= hidden_field_tag "scryfall_search[id]", nil, data: { card_search_target: "hidden" } %>
+  <%= hidden_field_tag "scryfall_search[quantity]", 1, data: { card_search_target: "quantity" } %>
+
+  <%= f.button :submit, "Import Card", class: "btn-import", data: { card_search_target: "submit" } %>
+<% end %>

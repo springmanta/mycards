@@ -15,19 +15,54 @@ class ScryfallApi
   end
 
   # Fetch card details by name
-  def search_cards(name)
-    return nil if name.blank? # Prevent error if name is nil or empty
+  def search_cards(query)
+    return [] if query.blank?
 
-    # Using CGI.escape to properly encode the card name
-    encoded_name = CGI.escape(name)
+    encoded_query = CGI.escape(query)
+    uri = URI("#{BASE_URL}/cards/search?q=#{encoded_query}")
+    response = make_request(uri)
 
-    uri = URI("#{BASE_URL}/cards/named?fuzzy=#{encoded_name}")
+    if response.is_a?(Net::HTTPSuccess)
+      json = JSON.parse(response.body)
+      return json["data"] || []
+    else
+      Rails.logger.error("Scryfall Search Error: #{response.code} - #{response.body}")
+      return []
+    end
+  rescue => e
+    Rails.logger.error("Scryfall API Error: #{e.message}")
+    return []
+  end
+
+  # Fetch card details by ID
+  def get_card_by_id(scryfall_id)
+    uri = URI("#{BASE_URL}/cards/#{scryfall_id}")
     response = make_request(uri)
 
     return JSON.parse(response.body) if response.is_a?(Net::HTTPSuccess)
 
-    Rails.logger.error("Scryfall Error: #{response.body}")
+    Rails.logger.error("Scryfall Get Error: #{response.body}")
     nil
+  end
+
+  # Fetch all prints (versions) of a card by name
+  def get_card_prints(card_name)
+    return [] if card_name.blank?
+
+    encoded_name = CGI.escape("!\"#{card_name}\"")
+    uri = URI("#{BASE_URL}/cards/search?q=#{encoded_name}&unique=prints")
+    response = make_request(uri)
+
+    if response.is_a?(Net::HTTPSuccess)
+      json = JSON.parse(response.body)
+      return json["data"] || []
+    else
+      Rails.logger.error("Scryfall Prints Error: #{response.code} - #{response.body}")
+      return []
+    end
+  rescue => e
+    Rails.logger.error("Scryfall API Error: #{e.message}")
+    return []
   end
 
   private

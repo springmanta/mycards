@@ -16,6 +16,9 @@
 @import "container-header";
 @import "cards-container";
 @import 'home-container';
+@import "card-search";
+@import "card-modal";
+@import "card-edit";
 
 // Main application styles
 
@@ -44,4 +47,9 @@ body {
 .logo {
   margin-left: 0;
   margin-top: 0;
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
 }

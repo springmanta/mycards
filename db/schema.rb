@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_04_08_153129) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_24_113256) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -38,6 +38,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_04_08_153129) do
     t.jsonb "full_json"
     t.string "artist"
     t.string "colors", default: [], array: true
-    t.index ["scryfall_id"], name: "index_cards_on_scryfall_id", unique: true
+    t.integer "quantity", default: 1, null: false
+    t.index ["scryfall_id"], name: "index_cards_on_scryfall_id"
   end
 end

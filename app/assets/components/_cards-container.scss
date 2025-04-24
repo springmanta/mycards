@@ -1,10 +1,11 @@
 .cards-container {
   margin-top: 50px;
   margin-bottom: 50px;
-  margin-left: 45px;
+  margin-left: 30px;
+  margin-right: 30px;
   display: flex;
   flex-wrap: wrap; /* To allow wrapping if cards exceed the container width */
-  gap: 40px; /* Space between each card */
+  gap: 25px; /* Space between each card */
   flex-direction: row;
 
   img {

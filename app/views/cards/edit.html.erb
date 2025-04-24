@@ -1,0 +1,20 @@
+<div class="container-header">
+  <p>Edit <%= @card.name %></p>
+</div>
+
+<div class="card-edit-container" data-controller="card-edit" data-card-edit-card-id-value="<%= @card.id %>" data-card-edit-card-name-value="<%= @card.name %>">
+  <%= render "cards_card", card: @card %>
+
+  <div data-card-edit-target="modalContainer"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const controller = document.querySelector('[data-controller="card-edit"]');
+    if (controller) {
+      setTimeout(() => {
+        controller.dispatchEvent(new CustomEvent('open-modal'));
+      }, 100);
+    }
+  });
+</script>

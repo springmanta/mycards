@@ -12,9 +12,12 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root to: "pages#home"
   #root "posts#index"
+  get "cards/search", to: "cards#search", as: :search_cards
+  get "cards/versions", to: "cards#card_versions", as: :card_versions
+
   resources :cards do
     collection do
-      post :"cards/import", to: "cards#import", as: :import_card
+      post :import
     end
   end
 end
