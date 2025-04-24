@@ -1,12 +1,9 @@
-<div class="container-header">
-  <p><%= pluralize(@cards.count, "card") %> in my collection</p>
-</div>
-<div class="cards-container">
-  <% @cards.each do |card| %>
-    <% if card.photo_url.present? %>
-      <%= link_to image_tag(card.photo_url), card_path(card.id) %>
-    <% else %>
-      <%= link_to "View #{card.name}", card_path(card.id) %>
-    <% end %>
-  <% end %>
+<div class="dashboard">
+  <div class="dashboard-img">
+    <%= image_tag "logo.png", alt: "MyCards Logo", class: "dashboard-logo" %>
+  </div>
+  <div class="dashboard-buttons">
+    <%= link_to "➕ Add a New Card", new_card_path, class: "dashboard-button" %>
+    <%= link_to "📚 View My Collection", collection_cards_path, class: "dashboard-button" %>
+  </div>
 </div>

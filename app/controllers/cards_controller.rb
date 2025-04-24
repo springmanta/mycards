@@ -2,6 +2,9 @@ class CardsController < ApplicationController
   before_action :set_card, only: [ :show, :destroy, :edit, :update ]
 
   def index
+  end
+
+  def collection
     @cards = Card.all
   end
 

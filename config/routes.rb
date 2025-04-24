@@ -10,10 +10,11 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
-  root to: "pages#home"
+  root to: "cards#index"
   #root "posts#index"
   get "cards/search", to: "cards#search", as: :search_cards
   get "cards/versions", to: "cards#card_versions", as: :card_versions
+  get "cards/collection", to: "cards#collection", as: :collection_cards
 
   resources :cards do
     collection do

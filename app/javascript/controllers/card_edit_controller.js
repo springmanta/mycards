@@ -8,18 +8,9 @@ export default class extends Controller {
   }
 
   connect() {
-    console.log("✅ Connected to card-edit controller")
-    console.log("Card ID Value:", this.cardIdValue)
-    console.log("Card Name Value:", this.cardNameValue)
-    console.log("Modal Container Target:", this.modalContainerTarget)
 
     // Check if modalContainer is visible
     const modalContainerStyle = window.getComputedStyle(this.modalContainerTarget)
-    console.log("Modal Container Display:", modalContainerStyle.display)
-    console.log("Modal Container Visibility:", modalContainerStyle.visibility)
-    console.log("Modal Container Position:", modalContainerStyle.position)
-    console.log("Modal Container Z-Index:", modalContainerStyle.zIndex)
-
     // Add event listener for open-modal event
     this.element.addEventListener('open-modal', () => {
       console.log("🔔 open-modal event received")
@@ -32,10 +23,8 @@ export default class extends Controller {
 
   setupEditButton() {
     // Find the edit button within the controller's element
-    const editButton = this.element.querySelector('.btn-edit')
+    const editButton = this.element.querySelector('.btn-update')
     if (editButton) {
-      console.log("🎯 Edit button found directly")
-
       // Remove any existing event listeners
       const newEditButton = editButton.cloneNode(true)
       editButton.parentNode.replaceChild(newEditButton, editButton)
@@ -230,7 +219,7 @@ export default class extends Controller {
     // Create a submit button for the modal
     const submitBtn = document.createElement('button')
     submitBtn.type = 'submit'
-    submitBtn.classList.add('btn-import')
+    submitBtn.classList.add('.btn-update')
     submitBtn.textContent = 'Update Card'
 
     actions.appendChild(submitBtn)
