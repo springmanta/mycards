@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Script to run database migrations on Heroku using a direct approach
+
+echo "Running database migrations on Heroku using a direct approach..."
+
+# Set environment variables to disable solid_queue, solid_cache, and solid_cable
+export DISABLE_SOLID_QUEUE=true
+export DISABLE_SOLID_CACHE=true
+export DISABLE_SOLID_CABLE=true
+
+# Get the DATABASE_URL from Heroku
+DATABASE_URL=$(heroku config:get DATABASE_URL)
+
+# Run the migration directly using the DATABASE_URL
+heroku run DATABASE_URL=$DATABASE_URL rails db:migrate
+
+echo "Migration completed!"

@@ -5,29 +5,14 @@ namespace :heroku do
     puts "Setting up database for Heroku deployment..."
 
     if ENV['DATABASE_URL']
-      puts "DATABASE_URL is set: #{ENV['DATABASE_URL']}"
-
-      require 'uri'
-      uri = URI.parse(ENV['DATABASE_URL'])
-
-      puts "Host: #{uri.host}"
-      puts "Port: #{uri.port}"
-      puts "Database: #{uri.path.split('/')[1]}"
-      puts "Username: #{uri.user}"
-      puts "Password: #{uri.password ? '[FILTERED]' : 'not set'}"
+      puts "DATABASE_URL is set"
 
       # Test the connection
       begin
-        ActiveRecord::Base.establish_connection(
-          adapter: 'postgresql',
-          host: uri.host,
-          port: uri.port,
-          database: uri.path.split('/')[1],
-          username: uri.user,
-          password: uri.password,
-          pool: ENV.fetch("RAILS_MAX_THREADS") { 5 }
-        )
+        # Use the DATABASE_URL directly
+        ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
 
+        # Test the connection
         ActiveRecord::Base.connection.execute("SELECT 1")
         puts "Database connection successful!"
       rescue => e

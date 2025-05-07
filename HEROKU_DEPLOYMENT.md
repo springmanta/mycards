@@ -54,13 +54,50 @@ This script:
 3. Pushes to Heroku
 4. Runs database migrations
 
-### 5. Run Database Migrations Manually (if needed)
+### 5. Run Database Migrations
 
-If you need to run database migrations manually, use the provided script:
+If you need to run database migrations, use one of the provided scripts:
+
+#### Standard Migration
 
 ```bash
 ./bin/heroku-db-migrate
 ```
+
+#### Direct Migration (Recommended)
+
+This approach directly uses the DATABASE_URL environment variable:
+
+```bash
+./bin/heroku-direct-migrate
+```
+
+### 6. Check Database Configuration
+
+To check the database configuration on Heroku:
+
+```bash
+./bin/heroku-check-db
+```
+
+This script:
+1. Checks if the PostgreSQL add-on is properly provisioned
+2. Checks the DATABASE_URL environment variable
+3. Checks if the database exists
+4. Tests the database connection
+
+### 7. Reset Database (if needed)
+
+If you need to reset the database on Heroku:
+
+```bash
+./bin/heroku-reset-db
+```
+
+This script:
+1. Resets the database
+2. Runs migrations
+3. Optionally seeds the database
 
 ## Troubleshooting
 
@@ -68,25 +105,37 @@ If you need to run database migrations manually, use the provided script:
 
 If you encounter database connection issues, try the following:
 
-1. Check if the PostgreSQL add-on is properly provisioned:
+1. Check the database configuration:
+
+```bash
+./bin/heroku-check-db
+```
+
+2. Make sure the PostgreSQL add-on is properly provisioned:
 
 ```bash
 heroku addons | grep postgresql
 ```
 
-2. Check the DATABASE_URL environment variable:
+3. Check the DATABASE_URL environment variable:
 
 ```bash
-heroku config | grep DATABASE_URL
+heroku config:get DATABASE_URL
 ```
 
-3. Run the database setup task:
+4. Try the direct migration approach:
 
 ```bash
-heroku run rake heroku:setup_database
+./bin/heroku-direct-migrate
 ```
 
-4. Restart the application:
+5. Reset the database (if necessary):
+
+```bash
+./bin/heroku-reset-db
+```
+
+6. Restart the application:
 
 ```bash
 heroku restart
@@ -104,15 +153,15 @@ heroku logs --tail
 
 The following files have been modified to ensure proper deployment to Heroku:
 
-- `config/database.yml`: Configured to use the DATABASE_URL environment variable
+- `config/database.yml`: Simplified to directly use the DATABASE_URL environment variable
 - `config/database.yml.erb`: Template for generating database.yml
-- `config/environments/production.rb`: Configured to use memory store and async queue adapter
-- `config/cable.yml`: Configured to use async adapter
-- `config/initializers/database_connection.rb`: Ensures proper database connection
+- `config/environments/production.rb`: Configured to conditionally use memory store and async queue adapter
+- `config/cable.yml`: Configured to conditionally use async adapter
+- `config/initializers/database_connection.rb`: Ensures proper database connection using DATABASE_URL
 - `Procfile`: Runs the database setup task before starting the web server
 - `Procfile.release`: Runs the database setup task during the release phase
 - `.env`: Contains environment variables for local development
-- `lib/tasks/heroku.rake`: Contains Rake tasks for Heroku deployment
+- `lib/tasks/heroku.rake`: Contains simplified Rake tasks for Heroku deployment
 
 ## Scripts
 
@@ -120,4 +169,7 @@ The following scripts have been created to help with deployment:
 
 - `bin/heroku-set-env`: Sets the necessary environment variables on Heroku
 - `bin/heroku-db-migrate`: Runs database migrations on Heroku
+- `bin/heroku-direct-migrate`: Runs database migrations using DATABASE_URL directly
+- `bin/heroku-check-db`: Checks the database configuration on Heroku
+- `bin/heroku-reset-db`: Resets the database on Heroku
 - `bin/heroku-deploy`: Deploys the application to Heroku
