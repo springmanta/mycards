@@ -13,4 +13,11 @@
     height: 340px;
     border-radius: 15px;
   }
+
+  /* Center images in mobile view */
+  @media (max-width: 768px) {
+    justify-content: center; /* Center items horizontally */
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 }

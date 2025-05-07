@@ -13,9 +13,12 @@
   top: 0;
   z-index: 1000; /* Ensure it stays above other content */
 
-  img {
-    width: 10%;
-    height: 10%;
+  .logo {
+    img {
+      width: 10%;
+      height: auto;
+      min-width: 100px; /* Prevents logo from becoming too small */
+    }
   }
 }
 

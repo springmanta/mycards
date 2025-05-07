@@ -23,7 +23,7 @@ export default class extends Controller {
 
   setupEditButton() {
     // Find the edit button within the controller's element
-    const editButton = this.element.querySelector('.btn-update')
+    const editButton = this.element.querySelector('.btn-edit')
     if (editButton) {
       // Remove any existing event listeners
       const newEditButton = editButton.cloneNode(true)
@@ -219,7 +219,7 @@ export default class extends Controller {
     // Create a submit button for the modal
     const submitBtn = document.createElement('button')
     submitBtn.type = 'submit'
-    submitBtn.classList.add('.btn-update')
+    submitBtn.classList.add('btn-update')
     submitBtn.textContent = 'Update Card'
 
     actions.appendChild(submitBtn)
@@ -290,7 +290,7 @@ export default class extends Controller {
               versionDetails.innerHTML = `
                 <p><strong>Set:</strong> ${version.set_name} </p>
                 <p><strong>Collector Number:</strong> ${version.collector_number}</p>
-                <p><strong>Rarity:</strong> ${version.rarity}</p>
+                <p><strong>Rarity:</strong> ${version.rarity.charAt(0).toUpperCase() + version.rarity.slice(1)}</p>
                 <p><strong>Artist:</strong> ${version.artist}</p>
               `
             }

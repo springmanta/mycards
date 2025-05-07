@@ -1,7 +1,7 @@
 <div class="card">
   <%= image_tag(card.photo_url) %>
-  <button class="btn-back"> <%= link_to "Back to MyCards", cards_path %> </button>
-  <button class="btn-edit"> <%= link_to "Edit Card", edit_card_path %> </button>
+  <button class="btn-back"> <%= link_to "Back to My Collection", collection_cards_path %> </button>
+  <button class="btn-edit"> <%= link_to "Edit Card", edit_card_path(card) %> </button>
   <button class="btn-delete"> <%= link_to "Delete Card", card_path(card), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %> </button>
 </div>
 
