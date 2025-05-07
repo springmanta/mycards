@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Script to deploy the application to Heroku
+
+echo "Deploying application to Heroku..."
+
+# Set environment variables
+./bin/heroku-set-env
+
+# Commit changes
+git add .
+git commit -m "Fix database configuration for Heroku deployment"
+
+# Push to Heroku
+git push heroku main
+
+# Run database migrations
+./bin/heroku-db-migrate
+
+echo "Deployment completed successfully!"

@@ -9,4 +9,11 @@ test:
   adapter: test
 
 production:
-  adapter: async
+  adapter: <%= ENV['DISABLE_SOLID_CABLE'] ? 'async' : 'solid_cable' %>
+  <% unless ENV['DISABLE_SOLID_CABLE'] %>
+  connects_to:
+    database:
+      writing: cable
+  polling_interval: 0.1.seconds
+  message_retention: 1.day
+  <% end %>

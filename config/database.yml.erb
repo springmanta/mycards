@@ -1,0 +1,41 @@
+<%
+  require 'uri'
+
+  def extract_database_url
+    url = ENV['DATABASE_URL']
+    if url
+      uri = URI.parse(url)
+      {
+        adapter: 'postgresql',
+        host: uri.host,
+        port: uri.port,
+        database: uri.path.split('/')[1],
+        username: uri.user,
+        password: uri.password
+      }
+    else
+      {}
+    end
+  end
+
+  database_config = extract_database_url
+%>
+
+default: &default
+  adapter: postgresql
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+
+development:
+  <<: *default
+  database: mycards_development
+
+test:
+  <<: *default
+  database: mycards_test
+
+production:
+  <<: *default
+  <% database_config.each do |key, value| %>
+  <%= key %>: <%= value %>
+  <% end %>

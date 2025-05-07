@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Script to set environment variables on Heroku
+
+echo "Setting environment variables on Heroku..."
+
+# Disable solid_queue, solid_cache, and solid_cable
+heroku config:set DISABLE_SOLID_QUEUE=true
+heroku config:set DISABLE_SOLID_CACHE=true
+heroku config:set DISABLE_SOLID_CABLE=true
+
+# Disable database environment check
+heroku config:set DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+
+# Set Rails environment
+heroku config:set RAILS_ENV=production
+heroku config:set RACK_ENV=production
+
+# Set log level
+heroku config:set RAILS_LOG_LEVEL=info
+
+# Force SSL
+heroku config:set FORCE_SSL=true
+
+echo "Environment variables set successfully!"

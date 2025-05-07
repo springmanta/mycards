@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Script to run database migrations on Heroku
+
+echo "Running database migrations on Heroku..."
+
+# Set environment variables to disable solid_queue, solid_cache, and solid_cable
+export DISABLE_SOLID_QUEUE=true
+export DISABLE_SOLID_CACHE=true
+export DISABLE_SOLID_CABLE=true
+
+# Run the heroku:setup_database task to ensure the database connection is working
+heroku run rake heroku:setup_database
+
+# Run the database migrations
+heroku run rake db:migrate

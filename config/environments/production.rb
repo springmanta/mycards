@@ -47,10 +47,10 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
 
   # Use a memory store for caching in production.
-  config.cache_store = :memory_store
+  config.cache_store = ENV['DISABLE_SOLID_CACHE'] ? :memory_store : :solid_cache_store
 
   # Use async for Active Job queue adapter in production.
-  config.active_job.queue_adapter = :async
+  config.active_job.queue_adapter = ENV['DISABLE_SOLID_QUEUE'] ? :async : :solid_queue
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
