@@ -4,6 +4,8 @@
   </div>
   <div class="dashboard-buttons">
     <%= link_to "➕ Add a New Card", new_card_path, class: "dashboard-button" %>
-    <%= link_to "📚 View My Collection", collection_cards_path, class: "dashboard-button" %>
+    <%= if cards.any? %>
+      <%= link_to "📚 View My Collection", collection_cards_path, class: "dashboard-button" %>
+    <% end %>
   </div>
 </div>
