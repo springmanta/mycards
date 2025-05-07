@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Script to deploy the fixed file to Heroku
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Deploying fix to Heroku app: $APP_NAME..."
+
+# Commit the changes
+echo "Committing changes..."
+git add app/views/cards/index.html.erb app/controllers/cards_controller.rb
+git commit -m "Fix syntax error in index.html.erb and add missing @cards variable in controller"
+
+# Push to Heroku
+echo "Pushing to Heroku..."
+git push heroku master
+
+# Restart the application
+echo "Restarting the application..."
+heroku restart --app $APP_NAME
+
+echo "Fix deployed successfully!"
