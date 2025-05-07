@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Script to deploy the application to a specific Heroku app
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Deploying application to Heroku app: $APP_NAME..."
+
+# Connect to the Heroku app
+./bin/heroku-connect
+
+# Commit changes
+echo "Committing changes..."
+git add .
+git commit -m "Fix database configuration for Heroku deployment"
+
+# Push to Heroku
+echo "Pushing to Heroku..."
+git push heroku master
+
+# Run migrations with the specific app name
+echo "Running migrations..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL from $APP_NAME"
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" rails db:migrate"
+
+# Restart the application
+echo "Restarting the application..."
+heroku restart --app $APP_NAME
+
+echo "Deployment to $APP_NAME completed successfully!"

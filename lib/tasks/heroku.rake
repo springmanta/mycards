@@ -4,6 +4,16 @@ namespace :heroku do
   task :setup_database => :environment do
     puts "Setting up database for Heroku deployment..."
 
+    # Try to get the DATABASE_URL from Heroku if it's not set
+    if !ENV['DATABASE_URL'] && system("which heroku > /dev/null 2>&1")
+      puts "DATABASE_URL is not set, trying to get it from Heroku..."
+      database_url = `heroku config:get DATABASE_URL`.strip
+      if database_url && !database_url.empty?
+        ENV['DATABASE_URL'] = database_url
+        puts "Got DATABASE_URL from Heroku"
+      end
+    end
+
     if ENV['DATABASE_URL']
       puts "DATABASE_URL is set"
 

@@ -12,7 +12,15 @@ export DISABLE_SOLID_CABLE=true
 # Get the DATABASE_URL from Heroku
 DATABASE_URL=$(heroku config:get DATABASE_URL)
 
+# Check if DATABASE_URL is set
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL: $DATABASE_URL"
+
 # Run the migration directly using the DATABASE_URL
-heroku run DATABASE_URL=$DATABASE_URL rails db:migrate
+heroku run "DATABASE_URL=\"$DATABASE_URL\" rails db:migrate"
 
 echo "Migration completed!"

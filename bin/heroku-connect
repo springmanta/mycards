@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Script to connect to an existing Heroku app and set up the environment
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Connecting to Heroku app: $APP_NAME..."
+
+# Check if the app exists
+if ! heroku apps:info --app $APP_NAME &> /dev/null; then
+  echo "Error: Heroku app $APP_NAME does not exist or you don't have access to it."
+  exit 1
+fi
+
+echo "Successfully connected to $APP_NAME"
+
+# Set the git remote for Heroku
+if ! git remote | grep -q heroku; then
+  echo "Setting up git remote for Heroku..."
+  git remote add heroku https://git.heroku.com/$APP_NAME.git
+else
+  echo "Updating git remote for Heroku..."
+  git remote set-url heroku https://git.heroku.com/$APP_NAME.git
+fi
+
+# Check if the PostgreSQL add-on is properly provisioned
+echo "Checking PostgreSQL add-on..."
+if ! heroku addons --app $APP_NAME | grep -q postgresql; then
+  echo "PostgreSQL add-on not found. Adding it now..."
+  heroku addons:create --app $APP_NAME heroku-postgresql:mini
+else
+  echo "PostgreSQL add-on is already provisioned."
+fi
+
+# Get the DATABASE_URL
+echo "Getting DATABASE_URL..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "DATABASE_URL is set on Heroku."
+
+# Set environment variables
+echo "Setting environment variables..."
+heroku config:set --app $APP_NAME DISABLE_SOLID_QUEUE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CACHE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CABLE=true
+heroku config:set --app $APP_NAME DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+heroku config:set --app $APP_NAME RAILS_ENV=production
+heroku config:set --app $APP_NAME RACK_ENV=production
+heroku config:set --app $APP_NAME RAILS_LOG_LEVEL=info
+heroku config:set --app $APP_NAME FORCE_SSL=true
+
+echo "Environment variables set successfully!"
+
+echo "Connection to $APP_NAME completed successfully!"

@@ -12,7 +12,7 @@ git add .
 git commit -m "Fix database configuration for Heroku deployment"
 
 # Push to Heroku
-git push heroku main
+git push heroku master
 
 # Run database migrations
 ./bin/heroku-db-migrate

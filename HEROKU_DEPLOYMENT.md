@@ -167,6 +167,8 @@ The following files have been modified to ensure proper deployment to Heroku:
 
 The following scripts have been created to help with deployment:
 
+### General Scripts
+
 - `bin/heroku-set-env`: Sets the necessary environment variables on Heroku
 - `bin/heroku-db-migrate`: Runs database migrations on Heroku
 - `bin/heroku-direct-migrate`: Runs database migrations using DATABASE_URL directly
@@ -175,6 +177,14 @@ The following scripts have been created to help with deployment:
 - `bin/heroku-deploy`: Deploys the application to Heroku
 - `bin/heroku-update-gemfile`: Updates the Gemfile.lock file for Heroku deployment
 - `bin/heroku-deploy-with-gemfile-update`: Deploys the application with Gemfile updates
+
+### App-Specific Scripts
+
+The following scripts are specifically for the "shrouded-eyrie-38835" Heroku app:
+
+- `bin/heroku-connect`: Connects to the existing Heroku app and sets up the environment
+- `bin/heroku-deploy-app`: Deploys the application to the specific Heroku app
+- `bin/heroku-migrate-app`: Runs migrations on the specific Heroku app
 
 ## Gemfile Changes
 

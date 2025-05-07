@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Script to run migrations on a specific Heroku app
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Running migrations on Heroku app: $APP_NAME..."
+
+# Get the DATABASE_URL
+echo "Getting DATABASE_URL..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL from $APP_NAME"
+
+# Set environment variables
+export DISABLE_SOLID_QUEUE=true
+export DISABLE_SOLID_CACHE=true
+export DISABLE_SOLID_CABLE=true
+
+# Run the migration with the specific app name and DATABASE_URL
+echo "Running migrations..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true rails db:migrate"
+
+echo "Migration on $APP_NAME completed successfully!"
