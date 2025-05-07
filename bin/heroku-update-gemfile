@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Script to update the Gemfile.lock file on Heroku
+
+echo "Updating Gemfile.lock for Heroku deployment..."
+
+# Commit the changes to the Gemfile
+git add Gemfile
+git commit -m "Move solid_cache, solid_queue, and solid_cable gems to development and test environments only"
+
+# Update the Gemfile.lock file
+bundle lock --add-platform x86_64-linux
+git add Gemfile.lock
+git commit -m "Update Gemfile.lock for Heroku deployment"
+
+# Push to Heroku
+git push heroku main
+
+echo "Gemfile.lock updated and pushed to Heroku!"

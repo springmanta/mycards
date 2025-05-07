@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Script to deploy the application to Heroku with Gemfile updates
+
+echo "Deploying application to Heroku with Gemfile updates..."
+
+# Set environment variables
+./bin/heroku-set-env
+
+# Update the Gemfile.lock file
+./bin/heroku-update-gemfile
+
+# Run database migrations
+./bin/heroku-direct-migrate
+
+# Restart the application
+heroku restart
+
+echo "Deployment completed successfully!"

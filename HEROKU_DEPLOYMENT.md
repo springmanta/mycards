@@ -173,3 +173,37 @@ The following scripts have been created to help with deployment:
 - `bin/heroku-check-db`: Checks the database configuration on Heroku
 - `bin/heroku-reset-db`: Resets the database on Heroku
 - `bin/heroku-deploy`: Deploys the application to Heroku
+- `bin/heroku-update-gemfile`: Updates the Gemfile.lock file for Heroku deployment
+- `bin/heroku-deploy-with-gemfile-update`: Deploys the application with Gemfile updates
+
+## Gemfile Changes
+
+The Gemfile has been modified to move the solid_cache, solid_queue, and solid_cable gems to the development and test environments only. This prevents these gems from being loaded in production, which can cause issues with Heroku deployment.
+
+### Deploying with Gemfile Updates
+
+To deploy the application with the updated Gemfile, run:
+
+```bash
+./bin/heroku-deploy-with-gemfile-update
+```
+
+This script:
+1. Sets environment variables
+2. Updates the Gemfile.lock file
+3. Runs database migrations
+4. Restarts the application
+
+### Updating Gemfile.lock Only
+
+If you only need to update the Gemfile.lock file, run:
+
+```bash
+./bin/heroku-update-gemfile
+```
+
+This script:
+1. Commits the changes to the Gemfile
+2. Updates the Gemfile.lock file
+3. Commits the changes to the Gemfile.lock file
+4. Pushes to Heroku
