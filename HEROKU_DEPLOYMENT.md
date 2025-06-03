@@ -45,8 +45,7 @@ This script sets the following environment variables:
 Run the provided script to deploy the application:
 
 ```bash
-./bin/heroku-deploy
-```
+§```
 
 This script:
 1. Sets the environment variables
@@ -185,6 +184,11 @@ The following scripts are specifically for the "shrouded-eyrie-38835" Heroku app
 - `bin/heroku-connect`: Connects to the existing Heroku app and sets up the environment
 - `bin/heroku-deploy-app`: Deploys the application to the specific Heroku app
 - `bin/heroku-migrate-app`: Runs migrations on the specific Heroku app
+- `bin/heroku-logs`: Shows the logs for the specific Heroku app
+- `bin/heroku-check-migrations`: Checks the migration status on the specific Heroku app
+- `bin/heroku-setup-and-migrate`: Sets up the database and runs migrations on the specific Heroku app
+- `bin/heroku-deploy-fix`: Deploys fixes for the view and controller to the specific Heroku app
+- `bin/heroku-full-fix`: Applies all fixes, resets the database, and runs migrations on the specific Heroku app
 
 ## Gemfile Changes
 

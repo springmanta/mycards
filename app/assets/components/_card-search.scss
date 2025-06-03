@@ -3,6 +3,7 @@
   max-width: 400px;
   margin: 2rem auto;
   text-align: center;
+  padding-top: 50px;
 }
 
 .card-search-label {
@@ -10,19 +11,26 @@
   margin-bottom: 0.5rem;
   font-weight: bold;
   font-size: 1rem;
-  color: #333;
+  color: #333333;
 }
 
 .card-search-input {
-  width: 100%;
-  padding: 10px 12px;
+  width: 90%;
+  padding: 20px 20px;
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.2s ease;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  transition: border-color 0.1s ease;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: bold;
   text-align: center;
+  color: #504e52;
+}
+
+.card-search-input::placeholder {
+  color: #999;
+  font-style: italic;
 }
 
 .card-search-input:focus {
@@ -85,10 +93,11 @@
   margin: 20px auto 0;
   text-align: center;
   max-width: 200px;
+  font-weight: bold;
 }
 
 .btn-update:hover {
-  background-color: #0056b3;
+  background-color: #7e6a96;
   transform: none;
 }
 

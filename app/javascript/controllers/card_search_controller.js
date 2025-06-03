@@ -35,7 +35,7 @@ export default class extends Controller {
 
     const title = document.createElement('h2')
     title.classList.add('card-modal-title')
-    title.textContent = 'Confirm Card Import'
+    // title.textContent = 'Confirm Card Import'
 
     const closeBtn = document.createElement('button')
     closeBtn.classList.add('card-modal-close')

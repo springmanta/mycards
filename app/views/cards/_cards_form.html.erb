@@ -4,7 +4,7 @@
            class="card-search-input"
            data-card-search-target="input"
            data-action="input->card-search#search"
-           placeholder="Search a card"
+           placeholder="card name"
            autocomplete="off" />
   </div>
   <div class="search-results-grid" data-card-search-target="results">
@@ -14,5 +14,5 @@
   <%= hidden_field_tag "scryfall_search[id]", nil, data: { card_search_target: "hidden" } %>
   <%= hidden_field_tag "scryfall_search[quantity]", 1, data: { card_search_target: "quantity" } %>
 
-  <%= f.button :submit, "Import Card", class: "btn-import", data: { card_search_target: "submit" } %>
+  <%#= f.button :submit, "Import Card", class: "btn-import", data: { card_search_target: "submit" } %>
 <% end %>

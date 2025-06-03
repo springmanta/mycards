@@ -1,12 +1,8 @@
 .cards-container {
-  margin-top: 50px;
-  margin-bottom: 50px;
-  margin-left: 30px;
-  margin-right: 30px;
   display: flex;
-  flex-wrap: wrap; /* To allow wrapping if cards exceed the container width */
-  gap: 25px; /* Space between each card */
-  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
 
   img {
     width: 244px;
@@ -20,4 +16,9 @@
     margin-left: 10px;
     margin-right: 10px;
   }
+}
+
+img:hover {
+  opacity: 0.7;
+  transition: opacity 0.1s ease;
 }

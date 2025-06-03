@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Script to check the logs on Heroku
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Checking logs for Heroku app: $APP_NAME..."
+
+# Get the logs
+heroku logs --tail --app $APP_NAME

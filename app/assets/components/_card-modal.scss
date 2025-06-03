@@ -13,7 +13,7 @@
 }
 
 .card-modal {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   border-radius: 10px;
   padding: 20px;
   max-width: 500px;
@@ -41,14 +41,22 @@
 }
 
 .card-modal-close {
-  background: rgb(246, 246, 248);
+  background: rgb(246, 243, 248);
   border: none;
-  font-size: 0.5rem;
+  font-size: 1rem;
   cursor: pointer;
   color: #777;
   position: absolute;
   right: 0;
   top: 0;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.card-modal-close:hover {
+  background-color: #403754 !important;
+  color: white;
+  transition: background-color 0.3s ease;
 }
 
 .card-modal-content {

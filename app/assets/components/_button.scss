@@ -1,58 +1,22 @@
-button {
-  background-color: rgb(132, 155, 208);
+.my-collection-btn, .new-card-btn {
+  background-color: rgb(103, 91, 128);
   color: white;
   border-radius: 5px;
-  padding: 10px;
-  border: none;
+  padding: 20px;
+  border-radius: 40px;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: bold;
   text-align: center;
   text-decoration: none;
   cursor: pointer;
-  margin-top: 20px;
   margin-bottom: 20px;
   font-size: 16px;
-  transition: background-color 0.3s ease;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 1px 2px rgba(1, 2, 3, 4);
 }
 
-button:hover {
-  background-color: rgb(171, 180, 221);
+.my-collection-btn:hover, .new-card-btn:hover {
+  background-color: rgb(107, 89, 109);
   color: white;
-  border-radius: 5px;
-  padding: 10px;
-  border: none;
-  text-decoration: none;
-}
-
-.form-button {
-  background-color: rgb(132, 155, 208);
-  color: white;
-  border-radius: 5px;
-  padding: 10px;
-  border: none;
-  margin-left: 6px;
-  width: 430px;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-weight: bold;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.form-button:hover {
-  background-color: rgb(171, 180, 221);
-  color: white;
-  border-radius: 5px;
-  padding: 10px;
-  border: none;
-  text-decoration: none;
-  cursor: pointer;
 }
 
 .btn-back {
@@ -106,19 +70,30 @@ button:hover {
   width: 329.4px;
 }
 
-.custom-button {
-  background-color: #5e4b8b;
+.btn-import {
+  background-color: rgb(171, 180, 221);
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.2s ease;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 25px;
 }
 
-.custom-button:hover {
-  background-color: #473671;
+.btn-import:hover {
+  background-color: #867e98;
+}
+
+.btn-update {
+  background-color: rgb(171, 180, 221);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: 25px;
 }

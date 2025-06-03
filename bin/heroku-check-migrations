@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Script to check if migrations have been run successfully on Heroku
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Checking migrations for Heroku app: $APP_NAME..."
+
+# Get the DATABASE_URL
+echo "Getting DATABASE_URL..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL from $APP_NAME"
+
+# Run the migration status command
+echo "Checking migration status..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true rails db:migrate:status"
+
+echo "Migration check completed!"

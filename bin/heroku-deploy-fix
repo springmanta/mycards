@@ -8,7 +8,7 @@ echo "Deploying fix to Heroku app: $APP_NAME..."
 # Commit the changes
 echo "Committing changes..."
 git add app/views/cards/index.html.erb app/controllers/cards_controller.rb
-git commit -m "Fix syntax error in index.html.erb and add missing @cards variable in controller"
+git commit -m "Fix syntax error in index.html.erb, add missing @cards variable in controller, and fix variable name in view"
 
 # Push to Heroku
 echo "Pushing to Heroku..."

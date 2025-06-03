@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Script to set up the database and run migrations on Heroku
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Setting up database and running migrations for Heroku app: $APP_NAME..."
+
+# Get the DATABASE_URL
+echo "Getting DATABASE_URL..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL from $APP_NAME"
+
+# Set environment variables
+echo "Setting environment variables..."
+heroku config:set --app $APP_NAME DISABLE_SOLID_QUEUE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CACHE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CABLE=true
+heroku config:set --app $APP_NAME DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+
+# Run the database setup
+echo "Running database setup..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true DISABLE_DATABASE_ENVIRONMENT_CHECK=1 rails db:setup"
+
+# Run the migrations
+echo "Running migrations..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true DISABLE_DATABASE_ENVIRONMENT_CHECK=1 rails db:migrate"
+
+# Restart the application
+echo "Restarting the application..."
+heroku restart --app $APP_NAME
+
+echo "Database setup and migrations completed successfully!"

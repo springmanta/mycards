@@ -79,7 +79,7 @@ class CardsController < ApplicationController
 
   def destroy
     @card.destroy
-    redirect_to cards_path, status: :see_other
+    redirect_to collection_cards_path, status: :see_other
   end
 
   def edit

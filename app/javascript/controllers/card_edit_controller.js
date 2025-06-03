@@ -89,7 +89,7 @@ export default class extends Controller {
 
     // Add inline styles to ensure visibility
     modal.style.backgroundColor = 'white';
-    modal.style.padding = '20px';
+    modal.style.padding = '15px';
     modal.style.borderRadius = '10px';
     modal.style.maxWidth = '500px';
     modal.style.width = '90%';

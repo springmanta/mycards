@@ -1,11 +1,11 @@
 <div class="navbar">
   <div class="logo">
-    <%= link_to cards_path do %>
-      <%= image_tag "logo.png" %>
-    <% end %>
-  </div>
+  <%= link_to cards_path do %>
+    <%= image_tag "logo.png" %>
+  <% end %>
+</div>
   <div class="navbar-right">
-    <button class="mycards-btn"> <%= link_to "My Collection", collection_cards_path %></button>
-    <button class="add-card-btn"> <%= link_to "New card", new_card_path %></button>
+    <button class="my-collection-btn"> <%= link_to "Collection", collection_cards_path %></button>
+    <button class="new-card-btn"> <%= link_to "New card", new_card_path %></button>
   </div>
 </div>

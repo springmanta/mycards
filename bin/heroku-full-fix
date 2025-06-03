@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# Script to apply all fixes and ensure proper database setup on Heroku
+
+APP_NAME="shrouded-eyrie-38835"
+echo "Applying all fixes to Heroku app: $APP_NAME..."
+
+# Commit the code fixes
+echo "Committing code fixes..."
+git add app/views/cards/index.html.erb app/controllers/cards_controller.rb
+git commit -m "Fix syntax error in index.html.erb, add missing @cards variable in controller, and fix variable name in view"
+
+# Set environment variables
+echo "Setting environment variables..."
+heroku config:set --app $APP_NAME DISABLE_SOLID_QUEUE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CACHE=true
+heroku config:set --app $APP_NAME DISABLE_SOLID_CABLE=true
+heroku config:set --app $APP_NAME DISABLE_DATABASE_ENVIRONMENT_CHECK=1
+heroku config:set --app $APP_NAME RAILS_ENV=production
+heroku config:set --app $APP_NAME RACK_ENV=production
+
+# Push to Heroku
+echo "Pushing to Heroku..."
+git push heroku master
+
+# Get the DATABASE_URL
+echo "Getting DATABASE_URL..."
+DATABASE_URL=$(heroku config:get DATABASE_URL --app $APP_NAME)
+if [ -z "$DATABASE_URL" ]; then
+  echo "Error: DATABASE_URL is not set on Heroku!"
+  exit 1
+fi
+
+echo "Using DATABASE_URL from $APP_NAME"
+
+# Reset the database
+echo "Resetting the database..."
+heroku pg:reset DATABASE --app $APP_NAME --confirm $APP_NAME
+
+# Run the database setup
+echo "Running database setup..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true DISABLE_DATABASE_ENVIRONMENT_CHECK=1 rails db:setup"
+
+# Run the migrations
+echo "Running migrations..."
+heroku run --app $APP_NAME "DATABASE_URL=\"$DATABASE_URL\" DISABLE_SOLID_QUEUE=true DISABLE_SOLID_CACHE=true DISABLE_SOLID_CABLE=true DISABLE_DATABASE_ENVIRONMENT_CHECK=1 rails db:migrate"
+
+# Restart the application
+echo "Restarting the application..."
+heroku restart --app $APP_NAME
+
+echo "All fixes applied successfully!"
