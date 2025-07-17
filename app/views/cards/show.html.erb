@@ -1,8 +1,3 @@
-<div class="container-header">
-  <p><%= @card.name %></p>
-</div>
-<div class="card-show-container" data-controller="card-edit" data-card-edit-card-id-value="<%= @card.id %>" data-card-edit-card-name-value="<%= @card.name %>">
-  <%= render "cards_card", card: @card %>
-
-  <div data-card-edit-target="modalContainer"></div>
+<div class="card-show">
+  <%= render "shared/cards-card", card: @card %>
 </div>

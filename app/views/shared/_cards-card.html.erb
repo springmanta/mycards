@@ -1,0 +1,6 @@
+<div class="cards-card">
+  <h1><%= card.name %></h1>
+  <%= image_tag card.photo_url if card.photo_url.present? %>
+  <span>Mana Value: <%= card.convertedManaCost %></span>
+  <span>Type: <%= card.card_type %></span>
+</div>
