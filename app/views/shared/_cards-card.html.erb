@@ -1,6 +1,17 @@
-<div class="cards-card">
-  <h1><%= card.name %></h1>
-  <%= image_tag card.photo_url if card.photo_url.present? %>
-  <span>Mana Value: <%= card.convertedManaCost %></span>
-  <span>Type: <%= card.card_type %></span>
-</div>
+  <div class="cards-header">
+    <h1><%= card.name %></h1>
+  </div>
+
+  <div class="cards-card">
+    <%= image_tag card.photo_url if card.photo_url.present? %>
+    <div class="card-info">
+      <span>Mana Value: <%= card.convertedManaCost %></span>
+      <span>Type: <%= card.card_type %></span>
+    </div>
+
+    <div class="card-links">
+        <%= link_to "Delete #{card.name}", card_path(card), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"}, class: "navbar-button"  %>
+        <br>
+        <%= link_to "Back to myCards", cards_path, class: "navbar-button" %>
+    </div>
+  </div>

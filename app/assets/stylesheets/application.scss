@@ -14,20 +14,18 @@
 @import 'index-container';
 @import 'navbar';
 @import 'card-show';
+@import 'cards-card';
+@import 'home-container';
+@import 'new-card-form';
 
 a {
   text-decoration: none;
   color: rgb(250, 250, 250);
+  border: none;
 }
 a:hover {
   text-decoration: none;
   color: rgb(240, 235, 235);
-}
-
-img {
-  width: 244px;
-  height: 340px;
-  border-radius: 5px;
 }
 
 body {

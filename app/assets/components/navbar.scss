@@ -1,7 +1,29 @@
 .navbar {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  font-size: xx-large;
+  font-size: large;
   font-weight: 800;
   text-align: center;
   color: rgb(196, 203, 230);
+  height: 200;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-right: 20px;
+  margin-top: 20px;
+}
+
+.navbar-button {
+  display: inline-block;
+  background-color: #a272a5;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.navbar-button:hover {
+  background-color: #482b57;
 }

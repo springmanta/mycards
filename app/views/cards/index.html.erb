@@ -1,9 +1,7 @@
 <div class="index-container">
   <% @cards.each do |card| %>
-    <ul>
-      <%= link_to card_path(card) do %>
-        <%= image_tag card.photo_url %>
-      <% end %>
-    </ul>
+    <%= link_to card_path(card) do %>
+      <%= image_tag card.photo_url if card.photo_url.present? %>
+    <% end %>
   <% end %>
 </div>

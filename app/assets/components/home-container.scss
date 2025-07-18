@@ -1,0 +1,18 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.logo {
+  width: 400px;
+  height: 400px;
+  border-radius: 5px;
+  transition: transform 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
