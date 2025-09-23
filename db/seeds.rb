@@ -11,7 +11,7 @@
 puts "Seed starting"
 Card.destroy_all
 
-card = Card.new(
+card1 = Card.new(
   name: "Thrasios, Triton Hero",
   set_name: "Commander 2016",
   rarity: "rare",
@@ -19,9 +19,27 @@ card = Card.new(
   type_line: "Legendary Creature — Merfolk Wizard",
   oracle_text: "{4}: Scry 1, then reveal the top card of your library. If it's a land card, put it onto the battlefield tapped. Otherwise, draw a card.\nPartner (You can have two commanders if both have partner.)",  # \n for line break
   power: "1",
-  toughness: "2",
+  toughness: "3",
   image_url: "https://cards.scryfall.io/large/front/2/1/21e27b91-c7f1-4709-aa0d-8b5d81b22a0a.jpg?1721690845"
 )
 
-card.save!
-puts "#{card.name} successfully created."
+card1.save!
+puts "#{card1.name} successfully created."
+
+card2 = Card.new(
+  name: "Krark, the Thumbless",
+  set_name: "Commander Legends",
+  rarity: "rare",
+  mana_cost: "0{R}",
+  type_line: "Legendary Creature — Goblin Wizard",
+  oracle_text: "{Whenever you cast an instant or sorcery spell, flip a coin. If you lose the flip, return that spell to its owner’s hand. If you win the flip, copy that spell, and you may choose new targets for the copy.
+Partner (You can have two commanders if both have partner.)",  # \n for line break
+  power: "2",
+  toughness: "2",
+  image_url: "https://cards.scryfall.io/large/front/0/6/06a981cd-1951-438e-95c9-68294795638e.jpg?1617148336"
+)
+
+card2.save!
+puts "#{card2.name} successfully created."
+
+puts "<-- Seeds ending... -->"
