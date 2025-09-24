@@ -9,7 +9,12 @@
 #   end
 
 puts "Seed starting"
+User.destroy_all
 Card.destroy_all
+
+user1 = User.new(email_address: "simaopmartins@gmail.com", password: "Thrasios_2016")
+user1.save!
+puts "user Simão created"
 
 card1 = Card.new(
   name: "Thrasios, Triton Hero",
