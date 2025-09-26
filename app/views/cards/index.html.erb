@@ -1,14 +1,12 @@
 <%= render "shared/navbar" %>
-
 <div>
-  <div class="text-center p-3 text-blue-950">
-    <h1 class=""><strong>Available Cards</strong></h1>
+  <div class="flex justify-center p-3 text-blue-950">
   </div>
 
   <div class="flex row">
     <% @cards.each do |card| %>
-      <div class="p-3">
-        <%= image_tag card.image_url, alt: card.name, class: "w-[244px] h-[340px] object-cover" %>
+      <div class="p-1">
+        <%= image_tag card.image_url, alt: card.name, class: "w-[244px] h-[340px] object-cover rounded-xl" %>
       </div>
     <% end %>
   </div>

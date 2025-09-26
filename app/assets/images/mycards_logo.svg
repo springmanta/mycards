@@ -1,0 +1,19 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Back card -->
+  <rect x="50" y="30" width="90" height="110" rx="12" ry="12" fill="#4A90A4" stroke="#2E5B6B" stroke-width="2"/>
+  
+  <!-- Middle card -->
+  <rect x="70" y="50" width="90" height="110" rx="12" ry="12" fill="#7CB3C7" stroke="#4A90A4" stroke-width="2"/>
+  
+  <!-- Front card -->
+  <rect x="90" y="70" width="90" height="110" rx="12" ry="12" fill="#FFFFFF" stroke="#4A90A4" stroke-width="3"/>
+  
+  <!-- Card content - circle (head) -->
+  <circle cx="135" cy="110" r="12" fill="#475569"/>
+  
+  <!-- Card content - rectangle (body) -->
+  <rect x="120" y="125" width="30" height="35" rx="4" ry="4" fill="#475569"/>
+  
+  <!-- Text -->
+  <text x="200" y="140" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="#475569">myCards</text>
+</svg>
