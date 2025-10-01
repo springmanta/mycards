@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_28_221814) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_30_220725) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -60,6 +60,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_221814) do
     t.string "power"
     t.string "toughness"
     t.string "image_url"
+    t.string "scryfall_id"
+    t.string "set_code"
+    t.index ["scryfall_id"], name: "index_cards_on_scryfall_id", unique: true
   end
 
   create_table "collection_cards", force: :cascade do |t|
@@ -67,6 +70,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_221814) do
     t.datetime "updated_at", null: false
     t.integer "collection_id", null: false
     t.integer "card_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.string "condition", default: "near_mint"
+    t.boolean "foil", default: false, null: false
+    t.decimal "price_paid", precision: 8, scale: 2
+    t.date "acquired_at"
     t.index ["card_id"], name: "index_collection_cards_on_card_id"
     t.index ["collection_id"], name: "index_collection_cards_on_collection_id"
   end
@@ -75,6 +83,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_221814) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
+    t.string "name", default: "My Collection"
     t.index ["user_id"], name: "index_collections_on_user_id"
   end
 
@@ -90,6 +99,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_221814) do
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
   end
 
   create_table "users", force: :cascade do |t|

@@ -1,0 +1,61 @@
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <div class="mb-8 flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold mb-2"><%= @collection.name %></h1>
+      <p class="text-gray-600"><%= @collection_cards.sum(:quantity) %> total cards</p>
+    </div>
+
+    <div class="flex gap-4 items-center">
+      <!-- View toggle -->
+      <div class="flex gap-2">
+        <%= link_to "Grid", collection_cards_path(view: 'grid'),
+            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
+        <%= link_to "List", collection_cards_path(view: 'list'),
+            class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
+      </div>
+
+      <%= link_to "← Back to Home", root_path, class: "text-blue-600 hover:text-blue-800" %>
+    </div>
+  </div>
+
+  <% if @collection_cards.empty? %>
+    <!-- empty state -->
+  <% elsif @view_mode == 'list' %>
+    <!-- List view: just card names, no images -->
+    <div class="bg-white border rounded-lg overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b">
+          <tr>
+            <th class="px-4 py-3 text-left">Card Name</th>
+            <th class="px-4 py-3 text-left">Set</th>
+            <th class="px-4 py-3 text-left">Qty</th>
+            <th class="px-4 py-3 text-left">Condition</th>
+            <th class="px-4 py-3 text-left">Foil</th>
+            <th class="px-4 py-3 text-left">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @collection_cards.each do |cc| %>
+            <tr class="border-b hover:bg-gray-50">
+              <td class="px-4 py-3 font-semibold"><%= cc.card.name %></td>
+              <td class="px-4 py-3 text-sm text-gray-600"><%= cc.card.set_name %></td>
+              <td class="px-4 py-3"><%= cc.quantity %></td>
+              <td class="px-4 py-3 text-sm"><%= cc.condition.titleize %></td>
+              <td class="px-4 py-3"><%= cc.foil ? "✓" : "" %></td>
+              <td class="px-4 py-3">
+                <%= link_to "Edit", edit_collection_card_path(cc), class: "text-blue-600 mr-2" %>
+                <%= button_to "Remove", collection_card_path(cc), method: :delete,
+                    data: { turbo_confirm: "Remove?" }, class: "text-red-600" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <!-- Grid view: your current card display with images -->
+    <div class="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <!-- your existing grid code -->
+    </div>
+  <% end %>
+</div>

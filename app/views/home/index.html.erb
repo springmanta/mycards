@@ -1,12 +1,41 @@
-<div class="container mx-auto mt-50">
-  <div class="flex justify-center">
-      <%= image_tag "mycards_logo.png", alt: "mycards-logo", class: "w-100 h-100" %>
+<!-- Hero Section with Background -->
+<div class="relative py-20 overflow-hidden">
+  <!-- Background image with overlay -->
+  <div class="absolute inset-0 z-0">
+    <%= image_tag "cards.jpg", class: "w-full h-full object-cover", alt: "" %>
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900/90 to-gray-800/85"></div>
   </div>
-  <div class="flex justify-center">
-    <h2 class="text-gray-600 text-4xl">Coming soon</h2>
-  <%# <%= form_with do |form| %>
-    <%#= form.search_field :query, class: "flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" %>
-    <%#= form.submit "Search", class: "px-8 py-3 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer" %>
-  <%# end %>
+
+  <!-- Content (on top of background) -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 text-center text-white">
+    <h1 class="text-5xl font-bold mb-4">myCards</h1>
+    <p class="text-md mb-8 text-gray-200">You deserve better than a shoebox.</p>
+
+    <!-- Search Bar -->
+    <%= form_with url: search_cards_path, method: :get, class: "max-w-2xl mx-auto" do |f| %>
+      <div class="space-y-3">
+        <%= f.text_field :q,
+            placeholder: "Search for a card...",
+            class: "text-center w-100 px-4 py-3 rounded-lg text-gray-900 bg-white/90 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600",
+            autofocus: true %>
+        <%= f.submit "Search", class: "w-100 bg-yellow-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors" %>
+      </div>
+    <% end %>
   </div>
 </div>
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="text-center">
+        <h3 class="text-xl font-semibold mb-2">Track Your Collection</h3>
+        <p class="text-gray-600">Keep track of every card you own with detailed condition tracking</p>
+      </div>
+      <div class="text-center">
+        <h3 class="text-xl font-semibold mb-2">Scan Your Cards</h3>
+        <p class="text-gray-600">Switch to our mobile version and scan through your collection.</p>
+      </div>
+      <div class="text-center">
+        <h3 class="text-xl font-semibold mb-2">Price Tracking</h3>
+        <p class="text-gray-600">Monitor the value of your collection over time</p>
+      </div>
+    </div>
+  </div>

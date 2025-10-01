@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
+  get "registrations/new"
+  get "registrations/create"
   resource :session
   resources :passwords, param: :token
+  resource :registration, only: [:new, :create]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -13,5 +16,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root to: "home#index"
-  resources :cards, only: [ :index, :show ]
+  resources :cards do
+    collection do
+      get :search
+    end
+  end
+
+  resources :collection_cards
 end
