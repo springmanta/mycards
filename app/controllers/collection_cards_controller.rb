@@ -3,7 +3,7 @@ class CollectionCardsController < ApplicationController
 
   def index
     @collection = Current.user.collections.first
-    @collection_cards = @collection.collection_cards.includes(:card)
+    @collection_cards = Current.user.collections.includes(collection_cards: :card).flat_map(&:collection_cards)
     @view_mode = params[:view] || 'list'
   end
 

@@ -1,6 +1,10 @@
 class CardsController < ApplicationController
   allow_unauthenticated_access only: [:search]
 
+  def index
+    @cards = Current.user.cards
+  end
+  
   def search
     @query = params[:q]
     @cards = []
