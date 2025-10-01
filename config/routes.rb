@@ -22,5 +22,5 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :collection_cards
+  resources :collection_cards, only: [:index, :new, :create, :edit, :update, :destroy]
 end

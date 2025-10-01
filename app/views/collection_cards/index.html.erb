@@ -2,19 +2,19 @@
   <div class="mb-8 flex justify-between items-center">
     <div>
       <h1 class="text-3xl font-bold mb-2"><%= @collection.name %></h1>
-      <p class="text-gray-600"><%= @collection_cards.sum(:quantity) %> total cards</p>
+      <p class="text-gray-600"><%= @collection_cards.sum(&:quantity) %> total cards</p>
     </div>
 
     <div class="flex gap-4 items-center">
       <!-- View toggle -->
       <div class="flex gap-2">
         <%= link_to "List", collection_cards_path(view: 'list'),
-            class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
+            class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-yellow-700 text-white' : 'bg-gray-200 border-1 hover:bg-gray-100'}" %>
         <%= link_to "Grid", collection_cards_path(view: 'grid'),
-            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
+            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-yellow-700 text-white' : 'bg-gray-200 border-1 hover:bg-gray-100'}" %>
       </div>
 
-      <%= link_to "← Back to Home", root_path, class: "text-blue-600 hover:text-blue-800" %>
+      <%#= link_to "← Back to Home", root_path, class: "text-gray-900 hover:text-gray-500 bg-yellow-300 p-2 rounded-lg" %>
     </div>
   </div>
 
@@ -26,26 +26,26 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b">
           <tr>
-            <th class="px-4 py-3 text-left">Name</th>
             <th class="px-4 py-3 text-left">Set</th>
             <th class="px-4 py-3 text-left">Qty</th>
             <th class="px-4 py-3 text-left">Condition</th>
             <th class="px-4 py-3 text-left">Foil?</th>
-            <th class="px-4 py-3 text-left">Actions</th>
+            <th class="px-4 py-3 text-center">Actions</th>
+            <th class="px-4 py-3 text-left">Name</th>
           </tr>
         </thead>
         <tbody>
           <% @collection_cards.each do |cc| %>
             <tr class="border-b hover:bg-gray-50">
-              <td class="px-4 py-3 font-semibold"><%= cc.card.name %></td>
-              <td class="px-4 py-3 text-sm text-gray-600"><%= cc.card.set_name %></td>
-              <td class="px-4 py-3"><%= cc.quantity %></td>
-              <td class="px-4 py-3 text-sm"><%= cc.condition.titleize %></td>
-              <td class="px-4 py-3"><%= cc.foil ? "✓" : "x" %></td>
-              <td class="px-4 py-3">
-                <%= link_to "Edit", edit_collection_card_path(cc), class: "text-blue-600 mr-2" %>
-                <%= button_to "Remove", collection_card_path(cc), method: :delete,
-                    data: { turbo_confirm: "Remove?" }, class: "text-red-600" %>
+              <td class="px-3 py-2 font-bold text-sm"><%= cc.card.name %></td>
+              <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
+              <td class="px-3 py-2 text-sm"><%= cc.quantity %></td>
+              <td class="px-3 py-2 text-sm"><%= cc.condition.titleize %></td>
+              <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "x" %></td>
+              <td class="px-3 py-2">
+                <span><%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600 mr-2" %></span>
+                <span><%= link_to "🗑️", collection_card_path(cc), method: :delete,
+                    data: { turbo_confirm: "Remove?" }, class: "text-red-600" %></span>
               </td>
             </tr>
           <% end %>
@@ -55,9 +55,9 @@
   <% else %>
     <!-- Grid view: your current card display with images -->
     <div class="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      <% @collection_cards.each do |card| %>
+      <% @collection_cards.each do |collection_card| %>
         <% link_to  %>
-        <%= image_tag card.card.image_url, class: "rounded-xl border-b shadow-ls hover:shadow-xl transition-shadow" %>
+        <%= image_tag collection_card.card.image_url, class: "rounded-xl shadow-ls hover:shadow-xl transition-shadow" %>
       <% end %>
       <!-- your existing grid code -->
     </div>
