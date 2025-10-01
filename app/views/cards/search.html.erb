@@ -1,0 +1,33 @@
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Search Results for "<%= @query %>"</h1>
+    <%= link_to "← Back to Home", root_path, class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <% if @cards.empty? && @query.present? %>
+    <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+      No cards found. Try another search.
+    </div>
+  <% elsif @cards.any? %>
+    <div class="mb-4 text-gray-600">
+      Found <%= @cards.length %> version(s) of <%= @card_name %>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @cards.each do |card| %>
+        <div class="border rounded-lg p-4 hover:shadow-lg transition-shadow">
+          <% if card["image_uris"] %>
+            <%= image_tag card["image_uris"]["normal"], alt: card["name"], class: "w-full rounded mb-3" %>
+          <% end %>
+
+          <h3 class="font-bold text-lg mb-1"><%= card["name"] %></h3>
+          <p class="text-sm text-gray-600 mb-1"><%= card["set_name"] %> (<%= card["set"].upcase %>)</p>
+          <p class="text-sm text-gray-500 mb-3"><%= card["rarity"].capitalize %></p>
+
+          <%= link_to "Add to Collection", new_collection_card_path(scryfall_id: card["id"]),
+              class: "block w-full text-center bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700 transition-colors" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

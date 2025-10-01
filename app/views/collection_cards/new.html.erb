@@ -1,0 +1,76 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Add Card to Collection</h1>
+    <%= link_to "← Back to Search", search_cards_path(q: @card_data["name"]), class: "text-blue-600 hover:text-blue-800" %>
+  </div>
+
+  <!-- Card Preview -->
+  <div class="bg-white border rounded-lg p-6 mb-6">
+    <div class="flex gap-4">
+      <% if @card_data["image_uris"] %>
+        <%= image_tag @card_data["image_uris"]["normal"], alt: @card_data["name"], class: "w-48 rounded" %>
+      <% end %>
+
+      <div>
+        <h2 class="text-2xl font-bold mb-2"><%= @card_data["name"] %></h2>
+        <p class="text-gray-600 mb-1"><%= @card_data["set_name"] %> (<%= @card_data["set"].upcase %>)</p>
+        <p class="text-gray-600 mb-1"><%= @card_data["rarity"].capitalize %></p>
+        <p class="text-sm text-gray-500 mt-4"><%= @card_data["type_line"] %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add to Collection Form -->
+  <%= form_with model: @collection_card, class: "bg-white border rounded-lg p-6" do |f| %>
+    <% if @collection_card.errors.any? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <ul>
+          <% @collection_card.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= hidden_field_tag :scryfall_id, @card_data["id"] %>
+
+    <div class="mb-4">
+      <%= f.label :collection_id, "Collection", class: "block mb-2 font-semibold" %>
+      <%= f.select :collection_id,
+          options_from_collection_for_select(@collections, :id, :name, @collections.first&.id),
+          {},
+          class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :quantity, class: "block mb-2 font-semibold" %>
+      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :condition, class: "block mb-2 font-semibold" %>
+      <%= f.select :condition,
+          CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
+          {},
+          class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :foil, class: "flex items-center" %>
+      <%= f.check_box :foil, class: "mr-2" %>
+      <span>Foil</span>
+    </div>
+
+    <div class="mb-4">
+      <%= f.label :price_paid, "Price Paid (optional)", class: "block mb-2 font-semibold" %>
+      <%= f.number_field :price_paid, step: 0.01, placeholder: "0.00", class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <div class="mb-6">
+      <%= f.label :acquired_at, "Date Acquired (optional)", class: "block mb-2 font-semibold" %>
+      <%= f.date_field :acquired_at, class: "w-full border rounded px-3 py-2" %>
+    </div>
+
+    <%= f.submit "Add to Collection", class: "w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors" %>
+  <% end %>
+</div>
