@@ -8,10 +8,10 @@
     <div class="flex gap-4 items-center">
       <!-- View toggle -->
       <div class="flex gap-2">
-        <%= link_to "Grid", collection_cards_path(view: 'grid'),
-            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
         <%= link_to "List", collection_cards_path(view: 'list'),
             class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
+        <%= link_to "Grid", collection_cards_path(view: 'grid'),
+            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-gray-800 text-white' : 'bg-gray-200'}" %>
       </div>
 
       <%= link_to "← Back to Home", root_path, class: "text-blue-600 hover:text-blue-800" %>
@@ -26,11 +26,11 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b">
           <tr>
-            <th class="px-4 py-3 text-left">Card Name</th>
+            <th class="px-4 py-3 text-left">Name</th>
             <th class="px-4 py-3 text-left">Set</th>
             <th class="px-4 py-3 text-left">Qty</th>
             <th class="px-4 py-3 text-left">Condition</th>
-            <th class="px-4 py-3 text-left">Foil</th>
+            <th class="px-4 py-3 text-left">Foil?</th>
             <th class="px-4 py-3 text-left">Actions</th>
           </tr>
         </thead>
@@ -41,7 +41,7 @@
               <td class="px-4 py-3 text-sm text-gray-600"><%= cc.card.set_name %></td>
               <td class="px-4 py-3"><%= cc.quantity %></td>
               <td class="px-4 py-3 text-sm"><%= cc.condition.titleize %></td>
-              <td class="px-4 py-3"><%= cc.foil ? "✓" : "" %></td>
+              <td class="px-4 py-3"><%= cc.foil ? "✓" : "x" %></td>
               <td class="px-4 py-3">
                 <%= link_to "Edit", edit_collection_card_path(cc), class: "text-blue-600 mr-2" %>
                 <%= button_to "Remove", collection_card_path(cc), method: :delete,
@@ -55,6 +55,10 @@
   <% else %>
     <!-- Grid view: your current card display with images -->
     <div class="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <% @collection_cards.each do |card| %>
+        <% link_to  %>
+        <%= image_tag card.card.image_url, class: "rounded-xl border-b shadow-ls hover:shadow-xl transition-shadow" %>
+      <% end %>
       <!-- your existing grid code -->
     </div>
   <% end %>
