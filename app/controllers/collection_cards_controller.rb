@@ -1,9 +1,11 @@
 class CollectionCardsController < ApplicationController
   before_action :set_card, only: [:new, :create]
+  before_action :set_collection_card, only: [:edit, :update, :destroy]
 
   def index
-    @collection = Current.user.collections.first
-    @collection_cards = Current.user.collections.includes(collection_cards: :card).flat_map(&:collection_cards)
+    @collections = Current.user.collections.includes(collection_cards: :card)
+    @collection_cards = @collections.flat_map(&:collection_cards).sort_by(&:created_at).reverse
+    @collection = @collections.first
     @view_mode = params[:view] || 'list'
   end
 
@@ -37,6 +39,25 @@ class CollectionCardsController < ApplicationController
     end
   end
 
+  def edit
+    @collections = Current.user.collections
+  end
+
+  def update
+    if @collection_card.update(collection_card_params)
+      redirect_to collection_cards_path, notice: "#{@collection_card.card.name} updated successfully!"
+    else
+      @collections = Current.user.collections
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    card_name = params[:scryfall_id]
+    @collection_card.destroy
+    redirect_to collection_cards_path, notice: "#{card_name} removed from collection."
+  end
+
   private
 
   def set_card
@@ -44,6 +65,10 @@ class CollectionCardsController < ApplicationController
 
     response = CardSearch.conn.get("/cards/#{scryfall_id}")
     @card_data = JSON.parse(response.body)
+  end
+
+  def set_collection_card
+    @collection_card = CollectionCard.find(params[:id])
   end
 
   def collection_card_params
