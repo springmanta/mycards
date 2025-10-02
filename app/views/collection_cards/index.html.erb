@@ -22,30 +22,35 @@
     <!-- empty state -->
   <% elsif @view_mode == 'list' %>
     <!-- List view: just card names, no images -->
-    <div class="bg-white border rounded-lg overflow-hidden">
+    <div class="bg-gray-100 rounded-md overflow-x-auto">
       <table class="w-full">
-        <thead class="bg-gray-50 border-b">
+        <thead class="bg-yellow-600 text-gray-900 font-extralight">
           <tr>
+            <th class="px-4 py-3 text-left">Name</th>
             <th class="px-4 py-3 text-left">Set</th>
             <th class="px-4 py-3 text-left">Qty</th>
             <th class="px-4 py-3 text-left">Condition</th>
-            <th class="px-4 py-3 text-left">Foil?</th>
-            <th class="px-4 py-3 text-center">Actions</th>
-            <th class="px-4 py-3 text-left">Name</th>
+            <th class="px-4 py-3 text-center">Foil?</th>
+            <th class="px-4 py-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @collection_cards.each do |cc| %>
-            <tr class="border-b hover:bg-gray-50">
+            <tr class="hover:bg-gray-50">
               <td class="px-3 py-2 font-bold text-sm"><%= cc.card.name %></td>
               <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
-              <td class="px-3 py-2 text-sm"><%= cc.quantity %></td>
+              <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
               <td class="px-3 py-2 text-sm"><%= cc.condition.titleize %></td>
               <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "x" %></td>
-              <td class="px-3 py-2">
-                <span><%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600 mr-2" %></span>
-                <span><%= link_to "🗑️", collection_card_path(cc), method: :delete,
-                    data: { turbo_confirm: "Remove?" }, class: "text-red-600" %></span>
+              <td class="px-4 py-3">
+                <div class="flex gap-2 items-center">
+                  <%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600" %>
+                  <%= button_to "🗑️", collection_card_path(cc),
+                      method: :delete,
+                      data: { turbo_confirm: "Remove this card from your collection?" },
+                      class: "text-red-600 p-0 bg-transparent border-none cursor-pointer",
+                      form: { class: "inline" } %>
+                </div>
               </td>
             </tr>
           <% end %>

@@ -16,11 +16,13 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root to: "home#index"
+
+  resources :collection_cards, only: [:index, :new, :create, :edit, :update, :destroy]
+
   resources :cards do
     collection do
       get :search
     end
   end
 
-  resources :collection_cards, only: [:index, :new, :create, :edit, :update, :destroy]
 end

@@ -1,0 +1,62 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-bold mb-6">Edit <%= @collection_card.card.name %></h1>
+
+  <!-- Card Preview -->
+  <div class="mb-8 text-center">
+    <%= image_tag @collection_card.card.image_url,
+        alt: @collection_card.card.name,
+        class: "w-64 h-auto mx-auto rounded-xl shadow-lg" %>
+    <h2 class="text-xl font-bold mt-4"><%= @collection_card.card.name %></h2>
+    <p class="text-gray-600"><%= @collection_card.card.set_name %></p>
+  </div>
+
+  <%= form_with model: @collection_card, url: collection_card_path(@collection_card), method: :patch, class: "space-y-6" do |f| %>
+
+    <%= f.hidden_field :collection_id, value: @collections.first.id %>
+
+    <!-- Quantity -->
+    <div>
+      <%= f.label :quantity, "Quantity", class: "block text-sm font-semibold mb-2" %>
+      <%= f.number_field :quantity,
+          min: 1,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
+    </div>
+
+    <!-- Condition -->
+    <div>
+      <%= f.label :condition, "Condition", class: "block text-sm font-semibold mb-2" %>
+      <%= f.select :condition,
+          CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
+          {},
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
+    </div>
+
+    <!-- Foil -->
+    <div class="flex items-center">
+      <%= f.check_box :foil, class: "w-5 h-5 text-yellow-800 border-gray-300 rounded focus:ring-yellow-600" %>
+      <%= f.label :foil, "Foil", class: "ml-2 text-sm font-semibold" %>
+    </div>
+
+    <!-- Price Paid (optional) -->
+    <div>
+      <%= f.label :price_paid, "Price Paid (optional)", class: "block text-sm font-semibold mb-2" %>
+      <%= f.number_field :price_paid,
+          step: 0.01,
+          placeholder: "0.00",
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
+    </div>
+
+    <!-- Acquired Date (optional) -->
+    <div>
+      <%= f.label :acquired_at, "Date Acquired (optional)", class: "block text-sm font-semibold mb-2" %>
+      <%= f.date_field :acquired_at,
+          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
+    </div>
+
+    <!-- Submit Buttons -->
+    <div class="flex gap-4">
+      <%= f.submit "Update Card", class: "flex-1 bg-yellow-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
+      <%= link_to "Cancel", collection_cards_path, class: "flex-1 bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition-colors text-center" %>
+    </div>
+  <% end %>
+</div>
