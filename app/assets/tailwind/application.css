@@ -5,3 +5,13 @@
     font-family: 'Inter', sans-serif;
   }
 }
+
+@theme {
+  --color-goldenrod: #B08330;
+  --color-golden-brown: #9E743C;
+  --color-umber: #8C6447;
+  --color-coffee: #805A4C;
+  --color-rose-ebony: #734F50;
+  --color-eggplant: #664455;
+  --color-violet: #593959;
+}

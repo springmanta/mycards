@@ -13,7 +13,7 @@ class RegistrationsController < ApplicationController
       @user.collections.create!(name: "My Collection")
 
       start_new_session_for @user
-      redirect_to root_path, notice: "Welcome to myCards!"
+      redirect_to after_authentication_url, notice: "Welcome to myCards!"
     else
       render :new, status: :unprocessable_entity
     end
