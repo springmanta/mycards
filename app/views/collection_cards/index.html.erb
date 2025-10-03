@@ -9,9 +9,9 @@
       <!-- View toggle -->
       <div class="flex gap-2">
         <%= link_to "List", collection_cards_path(view: 'list'),
-            class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-yellow-700 text-white' : 'bg-gray-200 border-1 hover:bg-gray-100'}" %>
+            class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-goldenrod text-white' : 'bg-gray-200 hover:bg-gray-100'}" %>
         <%= link_to "Grid", collection_cards_path(view: 'grid'),
-            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-yellow-700 text-white' : 'bg-gray-200 border-1 hover:bg-gray-100'}" %>
+            class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-goldenrod text-white' : 'bg-gray-200 hover:bg-gray-100'}" %>
       </div>
 
       <%#= link_to "← Back to Home", root_path, class: "text-gray-900 hover:text-gray-500 bg-yellow-300 p-2 rounded-lg" %>
@@ -24,7 +24,7 @@
     <!-- List view: just card names, no images -->
     <div class="bg-gray-100 rounded-md overflow-x-auto">
       <table class="w-full">
-        <thead class="bg-yellow-600 text-gray-900 font-extralight">
+        <thead class="bg-gradient-to-r from-yellow-600 to-umber shadow-lg text-gray-50 font-extralight">
           <tr>
             <th class="px-4 py-3 text-left">Name</th>
             <th class="px-4 py-3 text-left">Set</th>

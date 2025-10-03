@@ -1,14 +1,14 @@
 <div class="max-w-2xl mx-auto px-4 py-8">
-  <div class="mb-8">
+  <div class="mb-6">
     <h1 class="text-3xl font-bold mb-4">Add Card to Collection</h1>
-    <%= link_to "Back to Results", search_cards_path(q: @card_data["name"]), class: "text-gray-900 hover:text-gray-500 bg-yellow-300 p-2 rounded-lg" %>
+    <%= link_to "Results", search_cards_path(q: @card_data["name"]), class: "bg-yellow-600 text-white text-sm px-5 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
   </div>
 
   <!-- Card Preview -->
-  <div class="bg-gray-100 shadow-lg rounded-lg p-6 mb-6">
+  <div class="bg-gray-50 shadow-xl rounded-lg p-6 mb-6">
     <div class="flex gap-4">
       <% if @card_data["image_uris"] %>
-        <%= image_tag @card_data["image_uris"]["normal"], alt: @card_data["name"], class: "w-48 rounded-xl shadow-lg" %>
+        <%= image_tag @card_data["image_uris"]["normal"], alt: @card_data["name"], class: "w-48 rounded-xl shadow-xl" %>
       <% end %>
 
       <div>
@@ -21,7 +21,7 @@
   </div>
 
   <!-- Add to Collection Form -->
-  <%= form_with model: @collection_card, class: "bg-gray-100 shadow-lg rounded-lg p-6" do |f| %>
+  <%= form_with model: @collection_card, class: "bg-gray-50 shadow-lg rounded-lg p-6" do |f| %>
     <% if @collection_card.errors.any? %>
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
         <ul>
@@ -35,28 +35,28 @@
     <%= hidden_field_tag :scryfall_id, @card_data["id"] %>
 
     <div class="mb-4">
-      <%= f.label :collection_id, "Collection", class: "block mb-2 font-semibold" %>
+      <%= f.label :collection_id, "Collection", class: "block text-sm font-semibold mb-2" %>
       <%= f.select :collection_id,
           options_from_collection_for_select(@collections, :id, :name, @collections.first&.id),
           {},
-          class: "w-full border rounded px-3 py-2" %>
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
     </div>
 
     <div class="mb-4">
-      <%= f.label :quantity, class: "block mb-2 font-semibold" %>
-      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full border rounded px-3 py-2" %>
+      <%= f.label :quantity, class: "block text-sm font-semibold mb-2" %>
+      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
     </div>
 
     <div class="mb-4">
-      <%= f.label :condition, class: "block mb-2 font-semibold" %>
+      <%= f.label :condition, class: "block text-sm font-semibold mb-2" %>
       <%= f.select :condition,
           CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
           {},
-          class: "w-full border rounded px-3 py-2" %>
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
     </div>
 
     <div class="mb-4">
-      <%= f.label :foil, class: "flex items-center" %>
+      <%= f.label :foil, class: "block text-sm font-semibold mb-2" %>
       <%= f.check_box :foil, class: "mr-2" %>
       <span>Foil</span>
     </div>
