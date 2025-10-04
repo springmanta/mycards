@@ -20,31 +20,40 @@ class CardSearch
   end
 
   def self.search_printings(name)
-  # First, find the card with fuzzy matching to get exact name
+    if name.length < 8
+      rate_limit
+      response = conn.get("/cards/search", {
+        q: "name:/^#{name}/",
+        unique: "cards"
+      })
+      return response.status == 200 ? JSON.parse(response.body)["data"] : []
+    end
+
+  # For longer queries, try fuzzy match first
   rate_limit
   fuzzy_response = conn.get("/cards/named", { fuzzy: name })
 
-  return [] if fuzzy_response.status != 200
+  if fuzzy_response.status == 200
+    exact_name = JSON.parse(fuzzy_response.body)["name"]
 
-  exact_name = JSON.parse(fuzzy_response.body)["name"]
+    rate_limit
+    response = conn.get("/cards/search", {
+      q: "!\"#{exact_name}\"",
+      unique: "prints",
+      order: "released"
+    })
 
-  # Now search for all printings with exact name
+    return JSON.parse(response.body)["data"] if response.status == 200
+  end
+
+  # Fallback: partial name search
   rate_limit
   response = conn.get("/cards/search", {
-    q: "!\"#{exact_name}\"",
-    unique: "prints",
-    order: "released"
+    q: "name:/^#{name}/",
+    unique: "cards"
   })
 
-  case response.status
-  when 200
-    JSON.parse(response.body)["data"] || []
-  when 404
-    []
-  else
-    Rails.logger.error("Scryfall API error: #{response.status} - #{response.body}")
-    []
-  end
+  response.status == 200 ? JSON.parse(response.body)["data"] : []
 rescue Faraday::ConnectionFailed => e
   Rails.logger.error("Connection failed: #{e.message}")
   []

@@ -1,5 +1,4 @@
-<%# Navbar %>
-<nav class="bg-gradient-to-r from-coffee to-violet shadow-lg">
+<nav class="bg-gradient-to-r from-coffee to-violet shadow-lg relative z-30">
   <div class="max-w-7xl mx-auto px-4">
     <!-- Mobile layout (< 768px) -->
     <div class="md:hidden py-3">
@@ -22,15 +21,26 @@
 
       <!-- Mobile search bar -->
       <% if show_navbar_search? %>
-        <%= form_with url: search_cards_path, method: :get, class: "w-full" do |f| %>
+      <div data-controller="autocomplete" class="w-full mt-3 relative">
+        <%= form_with url: search_cards_path, method: :get, data: { turbo: false }, class: "w-full" do |f| %>
           <%= f.text_field :q,
               placeholder: "Search cards...",
-              class: "w-full px-4 py-2 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600" %>
+              autocomplete: "off",
+              class: "w-full px-4 py-2 rounded-lg text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600",
+              data: {
+                autocomplete_target: "input",
+                action: "input->autocomplete#search keydown.enter->autocomplete#submit"
+              } %>
+
+        <div data-autocomplete-target="results"
+              class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-2">
+        </div>
         <% end %>
+        </div>
       <% end %>
 
       <% if Current.user && !current_page?(collection_cards_path) %>
-        <%= link_to "myCollection", collection_cards_path, class: "block mt-3 text-gray-200 font-bold hover:text-white text-center" %>
+        <%= link_to "Collection", collection_cards_path, class: "block mt-3 text-gray-200 font-bold hover:text-white text-center" %>
       <% end %>
     </div>
 
@@ -45,18 +55,30 @@
       <!-- Desktop search bar -->
       <% if show_navbar_search? %>
         <div class="flex-1 max-w-md">
-          <%= form_with url: search_cards_path, method: :get, class: "w-full" do |f| %>
-            <%= f.text_field :q,
-                placeholder: "Search cards...",
-                class: "w-full px-4 py-2 rounded-lg text-gray-900 bg-white/90 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600 text-sm" %>
-          <% end %>
-        </div>
-      <% end %>
+          <div data-controller="autocomplete" class="relative">
+            <%= form_with url: search_cards_path, method: :get, data: { turbo: false } do |f| %>
+                    <%= f.text_field :q,
+                        placeholder: "Search cards...",
+                        autocomplete: "off",
+                        class: "w-full px-4 py-2 rounded-lg text-gray-900 bg-white/90 focus:bg-white focus:outline-none focus:ring-2 focus:ring-yellow-600 text-sm",
+                        data: {
+                          autocomplete_target: "input",
+                          action: "input->autocomplete#search keydown.enter->autocomplete#submit"
+                        } %>
+
+                    <!-- Autocomplete dropdown -->
+                    <div data-autocomplete-target="results"
+                        class="hidden absolute z-20 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-2">
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
 
       <div class="flex items-center space-x-6 flex-shrink-0">
         <% if Current.user %>
           <% if !current_page?(collection_cards_path) %>
-          <%= link_to "myCollection", collection_cards_path, class: "text-gray-200 bg-rose-ebony hover:bg-coffee py-2 px-3 rounded-lg hover:text-white transition-colors whitespace-nowrap" %>
+          <%= link_to "Collection", collection_cards_path, class: "text-gray-200 bg-rose-ebony hover:bg-coffee py-2 px-3 rounded-lg hover:text-white transition-colors whitespace-nowrap" %>
           <% end %>
           <%= button_to "Sign Out", session_path, method: :delete,
               class: "text-gray-200 hover:text-white transition-colors bg-transparent border-none cursor-pointer",

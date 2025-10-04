@@ -23,9 +23,11 @@ class CollectionCardsController < ApplicationController
       card.mana_cost = @card_data["mana_cost"]
       card.type_line = @card_data["type_line"]
       card.oracle_text = @card_data["oracle_text"]
-      card.image_url = @card_data.dig("image_uris", "normal")
       card.power = @card_data["power"]
       card.toughness = @card_data["toughness"]
+
+      card.image_url = @card_data.dig("image_uris", "normal") || @card_data.dig("card_faces", 0, "image_uris", "normal")
+
     end
 
     @collection_card = CollectionCard.new(collection_card_params)
