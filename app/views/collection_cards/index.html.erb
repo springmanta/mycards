@@ -59,10 +59,13 @@
     </div>
   <% else %>
     <!-- Grid view: your current card display with images -->
-    <div class="grid md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       <% @collection_cards.each do |collection_card| %>
-        <% link_to  %>
-        <%= image_tag collection_card.card.image_url, class: "rounded-xl shadow-ls hover:shadow-xl transition-shadow" %>
+        <% if collection_card.card.image_url %>
+          <%= image_tag collection_card.card.image_url,
+              alt: collection_card.card.name,
+              class: "w-full rounded-xl mb-2" %>
+        <% end %>
       <% end %>
       <!-- your existing grid code -->
     </div>
