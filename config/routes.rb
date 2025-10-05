@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
-  get "registrations/new"
-  get "registrations/create"
-  resource :session
-  resources :passwords, param: :token
+  resource :session, only: [:new, :create, :destroy]
+  resources :passwords, param: :token, only: [:new, :create, :edit, :update]
   resource :registration, only: [:new, :create]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -24,5 +22,4 @@ Rails.application.routes.draw do
       get :search
     end
   end
-
 end
