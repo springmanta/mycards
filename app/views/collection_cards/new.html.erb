@@ -48,7 +48,7 @@
     </div>
 
     <div class="mb-4">
-      <%= f.label :condition, class: "block text-sm font-semibold mb-2" %>
+      <%= f.label :condition, class: "block mb-2 font-semibold" %>
       <%= f.select :condition,
           CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
           {},
@@ -60,16 +60,6 @@
       <%= f.check_box :foil, class: "mr-2" %>
       <span>Foil</span>
     </div>
-
-    <%# <div class="mb-4"> %>
-      <%#= f.label :price_paid, "Price Paid (optional)", class: "block mb-2 font-semibold" %>
-      <%#= f.number_field :price_paid, step: 0.01, placeholder: "0.00", class: "w-full border rounded px-3 py-2" %>
-    <%# </div> %>
-
-    <%# <div class="mb-6"> %>
-      <%#= f.label :acquired_at, "Date Acquired (optional)", class: "block mb-2 font-semibold" %>
-      <%#= f.date_field :acquired_at, class: "w-full border rounded px-3 py-2" %>
-    <%# </div> %>
 
     <%= f.submit "Add to Collection", class: "w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
   <% end %>

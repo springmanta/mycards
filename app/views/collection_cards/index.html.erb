@@ -13,70 +13,94 @@
         <%= link_to "Grid", collection_cards_path(view: 'grid'),
             class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-goldenrod text-white' : 'bg-gray-200 hover:bg-gray-100'}" %>
       </div>
-
-      <%#= link_to "← Back to Home", root_path, class: "text-gray-900 hover:text-gray-500 bg-yellow-300 p-2 rounded-lg" %>
     </div>
   </div>
 
   <% if @collection_cards.empty? %>
-    <!-- empty state -->
-  <% elsif @view_mode == 'list' %>
-    <!-- List view: just card names, no images -->
-    <div class="bg-gray-100 rounded-md overflow-x-auto">
-      <table class="w-full">
-        <thead class="bg-gradient-to-r from-yellow-600 to-umber shadow-lg text-gray-50 font-extralight">
-          <tr>
-            <th class="px-4 py-3 text-left">Name</th>
-            <th class="px-4 py-3 text-left">Set</th>
-            <th class="px-4 py-3 text-left">Qty</th>
-            <th class="px-4 py-3 text-left">Condition</th>
-            <th class="px-4 py-3 text-center">Foil?</th>
-            <th class="px-4 py-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @collection_cards.each do |cc| %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc) %></td>
-              <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
-              <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
-              <td class="px-3 py-2 text-sm"><%= cc.condition.titleize %></td>
-              <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "x" %></td>
-              <td class="px-4 py-3">
-                <div class="flex gap-2 items-center">
-                  <%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600" %>
-                  <%= button_to "🗑️", collection_card_path(cc),
-                      method: :delete,
-                      data: { turbo_confirm: "Remove this card from your collection?" },
-                      class: "text-red-600 p-0 bg-transparent border-none cursor-pointer",
-                      form: { class: "inline" } %>
-                </div>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
+    <div class="bg-gray-100 border border-gray-300 text-gray-700 px-6 py-6 rounded text-center">
+      <p class="text-xl text-goldenrod font-bold">Your collection is empty</p>
     </div>
   <% else %>
-    <!-- Grid view: your current card display with images -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      <% @collection_cards.each do |collection_card| %>
-        <%= link_to collection_card_path(collection_card),
-            class: "group relative block rounded-xl overflow-hidden transition-shadow" do %>
-          <% if collection_card.card.image_url %>
-          <div class="relative">
-            <%= image_tag collection_card.card.image_url,
-                alt: collection_card.card.name,
-                class: "w-full rounded transition-all group-hover:brightness-75 cursor-pointer" %>
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
-                  <span class="text-goldenrod text-md font-semibold">Details</span>
-                </div>
+    <div data-controller="confirm">
+      <% if @view_mode == 'list' %>
+        <!-- List view -->
+        <div class="bg-gray-100 rounded-md overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gradient-to-r from-yellow-600 to-umber shadow-lg text-gray-50 font-extralight">
+              <tr>
+                <th class="px-4 py-3 text-left">Name</th>
+                <th class="px-4 py-3 text-left">Set</th>
+                <th class="px-4 py-3 text-left">Qty</th>
+                <th class="px-4 py-3 text-left">Condition</th>
+                <th class="px-4 py-3 text-center">Foil?</th>
+                <th class="px-4 py-3 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @collection_cards.each do |cc| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc) %></td>
+                  <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
+                  <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
+                  <td class="px-3 py-2 text-sm"><%= condition_badge(cc.condition) %></td>
+                  <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "-" %></td>
+                  <td class="px-4 py-3">
+                    <div class="flex gap-2 items-center">
+                      <%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600" %>
+                      <%= button_to "🗑️", collection_card_path(cc),
+                          method: :delete,
+                          data: {
+                            action: "click->confirm#show",
+                            card_name: cc.card.name
+                          },
+                          class: "text-red-600 p-0 bg-transparent border-none cursor-pointer",
+                          form: { class: "inline" } %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div data-confirm-target="modal"
+             data-action="click->confirm#cancel"
+             class="hidden fixed inset-0 bg-gray-900/40 z-50 flex items-center justify-center">
+          <div class="bg-white rounded-xl p-6 max-w-sm mx-4 shadow-2xl"
+               data-action="click->confirm#stopPropagation">
+            <h3 class="text-xl font-bold mb-2 text-goldenrod">Remove Card?</h3>
+            <p class="text-gray-600 mb-6">Remove <span data-confirm-target="cardName"></span> from your collection?</p>
+            <div class="flex gap-3">
+              <button data-action="click->confirm#cancel" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-semibold hover:bg-gray-300 cursor-pointer">
+                Cancel
+              </button>
+              <button data-action="click->confirm#confirm" class="flex-1 bg-coffee text-white py-2 rounded-lg font-semibold hover:bg-violet cursor-pointer">
+                Remove
+              </button>
+            </div>
           </div>
+        </div>
+      <% else %>
+        <!-- Grid view -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <% @collection_cards.each do |collection_card| %>
+            <%= link_to collection_card_path(collection_card),
+                class: "group relative block rounded-xl overflow-hidden transition-shadow" do %>
+              <% if collection_card.card.image_url %>
+                <div class="relative">
+                  <%= image_tag collection_card.card.image_url,
+                      alt: collection_card.card.name,
+                      class: "w-full rounded transition-all group-hover:brightness-75 cursor-pointer" %>
+                  <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
+                    <span class="text-goldenrod text-md font-semibold">Details</span>
+                  </div>
+                </div>
+              <% end %>
             <% end %>
           <% end %>
-        <% end %>
-
-      <!-- your existing grid code -->
+        </div>
+      <% end %>
     </div>
   <% end %>
 </div>
