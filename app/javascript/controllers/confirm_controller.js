@@ -1,14 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["modal"]
-
+  static targets = ["modal", "cardName"]
 
   show(event) {
     event.preventDefault()
     this.form = event.target.closest("form")
+
+    if (this.hasCardNameTarget) {
+      const cardName = event.target.dataset.cardName || "this card"
+      this.cardNameTarget.textContent = cardName
+    }
     this.modalTarget.classList.remove("hidden")
-    console.log("I'm here")
   }
 
   confirm() {
