@@ -6,7 +6,7 @@ document.addEventListener('click', (event) => {
   const autocompleteElements = document.querySelectorAll('[data-controller~="autocomplete"]')
   autocompleteElements.forEach(element => {
     if (!element.contains(event.target)){
-      const controller = Stimulus.getControllerForElementsAndIdentifier(element, 'autocomplete')
+      const controller = Stimulus.getControllerForElementAndIdentifier(element, 'autocomplete')
       if (controller) controller.hideResults()
     }
   })

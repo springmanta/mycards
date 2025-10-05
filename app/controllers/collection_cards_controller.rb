@@ -9,6 +9,10 @@ class CollectionCardsController < ApplicationController
     @view_mode = params[:view] || 'list'
   end
 
+  def show
+    @collection_card = CollectionCard.includes(:card, :collection).find(params[:id])
+  end
+
   def new
     @collection_card = CollectionCard.new(quantity: 1, condition: "near_mint", foil: false)
     @collections = Current.user.collections
@@ -23,6 +27,8 @@ class CollectionCardsController < ApplicationController
       card.mana_cost = @card_data["mana_cost"]
       card.type_line = @card_data["type_line"]
       card.oracle_text = @card_data["oracle_text"]
+      card.flavor_text = @card_data["flavor_text"]
+      card.artist = @card_data["artist"]
       card.power = @card_data["power"]
       card.toughness = @card_data["toughness"]
 

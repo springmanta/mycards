@@ -26,9 +26,16 @@
   </head>
 
   <body class="bg-gray-200">
-      <%# <% unless controller_name == "home" %>
-        <%= render "shared/navbar" %>
-      <%# <% end %>
+    <%= render "shared/navbar" %>
+      <% if flash.any? %>
+        <div class="max-w-7xl mx-auto px-4 py-4">
+          <% flash.each do |type, message| %>
+            <div class="<%= type == 'notice' ? 'bg-green-100 border-green-400 text-green-700' : 'bg-red-100 border-red-400 text-red-700' %> text-center border px-4 py-3 rounded mb-4">
+              <%= message %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <main>
       <%= yield %>
     </main>
