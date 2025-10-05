@@ -19,22 +19,36 @@ class CollectionCardsController < ApplicationController
   end
 
   def create
-    @card = Card.find_or_create_by(scryfall_id: @card_data["id"]) do |card|
-      card.name = @card_data["name"]
-      card.set_name = @card_data["set_name"]
-      card.set_code = @card_data["set"]
-      card.rarity = @card_data["rarity"]
-      card.mana_cost = @card_data["mana_cost"]
-      card.type_line = @card_data["type_line"]
-      card.oracle_text = @card_data["oracle_text"]
-      card.flavor_text = @card_data["flavor_text"]
-      card.artist = @card_data["artist"]
-      card.power = @card_data["power"]
-      card.toughness = @card_data["toughness"]
+    @card = Card.find_or_initialize_by(scryfall_id: @card_data["id"])
 
-      card.image_url = @card_data.dig("image_uris", "normal") || @card_data.dig("card_faces", 0, "image_uris", "normal")
+      if @card.new_record? || @card.image_url.nil?
+          @card.assign_attributes(
+            name: @card_data["name"],
+            set_name: @card_data["set_name"],
+            set_code: @card_data["set"],
+            rarity: @card_data["rarity"],
+            mana_cost: @card_data["mana_cost"],
+            type_line: @card_data["type_line"],
+            oracle_text: @card_data["oracle_text"],
+            image_url: @card_data.dig("image_uris", "normal") ||
+                      @card_data.dig("card_faces", 0, "image_uris", "normal"),
+            power: @card_data["power"],
+            toughness: @card_data["toughness"]
+          )
+      end
 
+    # Always update these fields
+    @card.flavor_text = @card_data["flavor_text"]
+    @card.artist = @card_data["artist"]
+
+    # Add pricing data
+    if @card_data["prices"]
+      @card.tcgplayer_price = @card_data.dig("prices", "usd")
+      @card.cardmarket_price = @card_data.dig("prices", "eur")
+      @card.prices_updated_at = Time.current
     end
+
+    @card.save!
 
     @collection_card = CollectionCard.new(collection_card_params)
     @collection_card.card = @card

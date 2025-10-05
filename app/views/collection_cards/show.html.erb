@@ -85,13 +85,21 @@
             <dt class="text-sm text-gray-600">Quantity</dt>
             <dd class="font-semibold"><%= @collection_card.quantity %>x</dd>
           </div>
+
+          <% if @collection_card.card.cardmarket_price %>
+            <div>
+              <dt class="text-sm text-gray-600">Market Price (Cardmarket)</dt>
+              <dd class="font-semibold text-green-600">€<%= number_with_precision(@collection_card.card.cardmarket_price, precision: 2) %></dd>
+            </div>
+          <% end %>
+
           <div>
             <dt class="text-sm text-gray-600">Condition</dt>
             <dd class="font-semibold"><%= @collection_card.condition.titleize %></dd>
           </div>
           <div>
             <dt class="text-sm text-gray-600">Foil</dt>
-            <dd class="font-semibold"><%= @collection_card.foil ? "Yes ✨" : "No" %></dd>
+            <dd class="font-semibold"><%= @collection_card.foil ? "Yes" : "No" %></dd>
           </div>
           <% if @collection_card.price_paid %>
             <div>
