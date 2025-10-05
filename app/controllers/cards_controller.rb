@@ -4,19 +4,23 @@ class CardsController < ApplicationController
   def index
     @cards = Current.user.cards
   end
-  
+
   def search
     @query = params[:q]
     @cards = []
     @card_name = nil
 
-    if @query.present?
+    if @query.blank?
+      redirect_back fallback_location: root_path, alert: "Please enter a card name to search"
+      return
+    end
+
+    @cards = []
+    @card_name = nil
+
       result = CardSearch.search_printings(@query)
-
-      Rails.logger.info "Search result: #{result.inspect}"
-
+      # Rails.logger.info "Search result: #{result.inspect}"
       @cards = result.is_a?(Array) ? result : []
       @card_name = @cards.first&.dig("name") if @cards.any?
-    end
   end
 end

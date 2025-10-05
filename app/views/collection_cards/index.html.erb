@@ -37,7 +37,7 @@
         <tbody>
           <% @collection_cards.each do |cc| %>
             <tr class="hover:bg-gray-50">
-              <td class="px-3 py-2 font-bold text-sm"><%= cc.card.name %></td>
+              <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc) %></td>
               <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
               <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
               <td class="px-3 py-2 text-sm"><%= cc.condition.titleize %></td>
@@ -61,12 +61,21 @@
     <!-- Grid view: your current card display with images -->
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       <% @collection_cards.each do |collection_card| %>
-        <% if collection_card.card.image_url %>
-          <%= image_tag collection_card.card.image_url,
-              alt: collection_card.card.name,
-              class: "w-full rounded-xl mb-2" %>
+        <%= link_to collection_card_path(collection_card),
+            class: "group relative block rounded-xl overflow-hidden transition-shadow" do %>
+          <% if collection_card.card.image_url %>
+          <div class="relative">
+            <%= image_tag collection_card.card.image_url,
+                alt: collection_card.card.name,
+                class: "w-full rounded transition-all group-hover:brightness-75 cursor-pointer" %>
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
+                  <span class="text-goldenrod text-md font-semibold">Details</span>
+                </div>
+          </div>
+            <% end %>
+          <% end %>
         <% end %>
-      <% end %>
+
       <!-- your existing grid code -->
     </div>
   <% end %>
