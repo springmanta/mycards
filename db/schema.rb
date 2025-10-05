@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_05_000939) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_05_155454) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -64,6 +64,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_000939) do
     t.string "set_code"
     t.text "flavor_text"
     t.string "artist"
+    t.decimal "tcgplayer_price", precision: 8, scale: 2
+    t.decimal "cardmarket_price", precision: 8, scale: 2
+    t.datetime "prices_updated_at"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id", unique: true
   end
 

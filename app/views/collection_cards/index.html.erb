@@ -2,7 +2,16 @@
   <div class="mb-8 flex justify-between items-center">
     <div>
       <h1 class="text-3xl font-bold mb-2"><%= @collection.name %></h1>
-      <p class="text-gray-600"><%= @collection_cards.sum(&:quantity) %> total cards</p>
+      <p class="text-gray-600 font-bold"><%= @collection_cards.sum(&:quantity) %> total cards</p>
+      <p class="text-gray-600">Collection value</p>
+      <div>
+        <p class="font-bold">
+          <%= number_with_precision(
+                @collection_cards.sum { |cc| cc.card.cardmarket_price.to_f },
+                precision: 2
+              ) %> €
+        </p>
+      </div>
     </div>
 
     <div class="flex gap-4 items-center">
@@ -31,7 +40,8 @@
                 <th class="px-4 py-3 text-left">Name</th>
                 <th class="px-4 py-3 text-left">Set</th>
                 <th class="px-4 py-3 text-left">Qty</th>
-                <th class="px-4 py-3 text-left">Condition</th>
+                <th class="px-4 py-3 text-center">Price</th>
+                <th class="px-4 py-3 text-center">Condition</th>
                 <th class="px-4 py-3 text-center">Foil?</th>
                 <th class="px-4 py-3 text-left">Actions</th>
               </tr>
@@ -42,7 +52,14 @@
                   <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc) %></td>
                   <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
                   <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
-                  <td class="px-3 py-2 text-sm"><%= condition_badge(cc.condition) %></td>
+                  <td class="px-3 py-2 text-sm text-center">
+                    <% if cc.card.cardmarket_price %>
+                      <%= number_with_precision(cc.card.cardmarket_price, precision: 2) %>€
+                    <% else %>
+                      <span class="text-gray-400">N/A</span>
+                    <% end %>
+                  </td>
+                  <td class="px-3 py-2 text-sm text-center"><%= condition_badge(cc.condition) %></td>
                   <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "-" %></td>
                   <td class="px-4 py-3">
                     <div class="flex gap-2 items-center">
