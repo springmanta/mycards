@@ -20,16 +20,17 @@ class CardSearch
   end
 
   def self.search_printings(name)
-    if name.length < 8
-      rate_limit
-      response = conn.get("/cards/search", {
-        q: "name:/^#{name}/",
-        unique: "cards"
-      })
-      return response.status == 200 ? JSON.parse(response.body)["data"] : []
-    end
+  # For very short queries, do partial name search
+  if name.length < 8
+    rate_limit
+    response = conn.get("/cards/search", {
+      q: "name:/^#{name}/",
+      unique: "cards"
+    })
+    return response.status == 200 ? JSON.parse(response.body)["data"] : []
+  end
 
-  # For longer queries, try fuzzy match first
+  # For longer queries, get all printings of the exact card
   rate_limit
   fuzzy_response = conn.get("/cards/named", { fuzzy: name })
 
@@ -46,14 +47,7 @@ class CardSearch
     return JSON.parse(response.body)["data"] if response.status == 200
   end
 
-  # Fallback: partial name search
-  rate_limit
-  response = conn.get("/cards/search", {
-    q: "name:/^#{name}/",
-    unique: "cards"
-  })
-
-  response.status == 200 ? JSON.parse(response.body)["data"] : []
+  []
 rescue Faraday::ConnectionFailed => e
   Rails.logger.error("Connection failed: #{e.message}")
   []

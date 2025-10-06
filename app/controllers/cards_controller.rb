@@ -19,7 +19,7 @@ class CardsController < ApplicationController
     @card_name = nil
 
       result = CardSearch.search_printings(@query)
-      # Rails.logger.info "Search result: #{result.inspect}"
+      Rails.logger.info "Search result: #{result.inspect}"
       @cards = result.is_a?(Array) ? result : []
       @card_name = @cards.first&.dig("name") if @cards.any?
   end
