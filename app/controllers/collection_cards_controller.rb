@@ -16,7 +16,20 @@ class CollectionCardsController < ApplicationController
   def new
     @collection_card = CollectionCard.new(quantity: 1, condition: "near_mint", foil: false)
     @collections = Current.user.collections
+
+    card_name = @card_data["name"]
+    response = CardSearch.conn.get("/cards/search", {
+      q: "!\"#{card_name}\"",
+      unique: "prints",
+      order: "released"
+    })
+
+    if response.status == 200
+      @all_printings = JSON.parse(response.body)["data"]
+    else
+      @all_printings = [@card_data]
   end
+end
 
   def create
     @card = Card.find_or_initialize_by(scryfall_id: @card_data["id"])

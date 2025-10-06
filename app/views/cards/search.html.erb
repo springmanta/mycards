@@ -1,35 +1,40 @@
 <div class="max-w-6xl mx-auto px-4 py-8">
   <h1 class="text-3xl font-bold mb-6">Search Results</h1>
 
+  <!-- Debug: show total count -->
+  <p class="mb-4 text-gray-600">Found <%= @cards.length %> result(s) for "<%= @query %>"</p>
+
   <% if @query.present? %>
     <% if @cards.any? %>
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         <% @cards.each do |card| %>
           <% image_url = card.dig("image_uris", "normal") || card.dig("card_faces", 0, "image_uris", "normal") %>
 
-          <% if image_url %>
-            <%= link_to new_collection_card_path(scryfall_id: card["id"]), class: "block group relative" do %>
+          <!-- Show card even without image for debugging -->
+          <%= link_to new_collection_card_path(scryfall_id: card["id"]), class: "block group relative" do %>
+            <% if image_url %>
               <div class="relative overflow-hidden rounded-xl">
                 <%= image_tag image_url,
                     alt: card["name"],
                     class: "w-full h-auto object-cover rounded-xl shadow-lg group-hover:shadow-xl" %>
 
-                <!-- Hover Overlay -->
                 <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
                   <span class="text-white text-md font-semibold">Add ＋</span>
                 </div>
               </div>
-
-              <p class="text-center mt-2 text-sm font-semibold"><%= card["name"] %></p>
-              <p class="text-center text-xs text-gray-500"><%= card["set_name"] %></p>
+            <% else %>
+              <div class="bg-gray-200 rounded-xl p-4 text-center">
+                <p class="text-gray-500">No image</p>
+              </div>
             <% end %>
+
+            <p class="text-center mt-2 text-sm font-semibold"><%= card["name"] %></p>
+            <p class="text-center text-xs text-gray-500"><%= card["set_name"] %></p>
           <% end %>
         <% end %>
       </div>
     <% else %>
       <p class="text-gray-500">No cards found for "<%= @query %>"</p>
     <% end %>
-  <% else %>
-    <p class="text-gray-500">Enter a search term to find cards</p>
   <% end %>
 </div>

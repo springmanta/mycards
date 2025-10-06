@@ -1,14 +1,21 @@
-<div class="max-w-2xl mx-auto px-4 py-8">
+<div class="max-w-2xl mx-auto px-4 py-8"
+     data-controller="card-preview"
+     data-card-preview-printings-value="<%= @all_printings.to_json %>">
+
+  <!-- Header -->
   <div class="mb-6">
     <h1 class="text-3xl font-bold mb-4">Add Card to Collection</h1>
-    <%= link_to "Results", search_cards_path(q: @card_data["name"]), class: "bg-yellow-600 text-white text-sm px-5 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
+    <%= link_to "Results", search_cards_path(q: @card_data["name"]), class: "bg-yellow-600 text-white text-sm px-5 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors" %>
   </div>
 
   <!-- Card Preview -->
   <div class="bg-gray-50 shadow-xl rounded-lg p-6 mb-6">
     <div class="flex gap-4">
       <% if @card_data["image_uris"] %>
-        <%= image_tag @card_data["image_uris"]["normal"], alt: @card_data["name"], class: "w-48 rounded-xl shadow-xl" %>
+        <%= image_tag @card_data["image_uris"]["normal"],
+            alt: @card_data["name"],
+            class: "w-48 rounded-xl shadow-xl",
+            data: { card_preview_target: "image" } %>
       <% end %>
 
       <div>
@@ -32,33 +39,41 @@
       </div>
     <% end %>
 
-    <%= hidden_field_tag :scryfall_id, @card_data["id"] %>
+    <!-- Set/Printing Selector -->
+    <div class="mb-4">
+      <%= label_tag :scryfall_id, "Choose Set/Printing", class: "block text-sm font-semibold mb-2" %>
+      <%= select_tag :scryfall_id,
+          options_for_select(@all_printings.map { |p| ["#{p['set_name']} (#{p['set'].upcase})", p['id']] }, @card_data['id']),
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base",
+          data: { action: "change->card-preview#updateImage" } %>
+    </div>
 
     <div class="mb-4">
       <%= f.label :collection_id, "Collection", class: "block text-sm font-semibold mb-2" %>
       <%= f.select :collection_id,
           options_from_collection_for_select(@collections, :id, :name, @collections.first&.id),
           {},
-          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
     </div>
 
     <div class="mb-4">
       <%= f.label :quantity, class: "block text-sm font-semibold mb-2" %>
-      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
+      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
     </div>
 
     <div class="mb-4">
-      <%= f.label :condition, class: "block mb-2 font-semibold" %>
+      <%= f.label :condition, class: "block text-sm font-semibold mb-2" %>
       <%= f.select :condition,
           CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
           {},
-          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent text-base" %>
+          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
     </div>
 
     <div class="mb-4">
-      <%= f.label :foil, class: "block text-sm font-semibold mb-2" %>
-      <%= f.check_box :foil, class: "mr-2" %>
-      <span>Foil</span>
+      <label class="flex items-center">
+        <%= f.check_box :foil, class: "mr-2" %>
+        <span class="text-sm font-semibold">Foil</span>
+      </label>
     </div>
 
     <%= f.submit "Add to Collection", class: "w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
