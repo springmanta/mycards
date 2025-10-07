@@ -20,38 +20,38 @@ class CardSearch
   end
 
   def self.search_printings(name)
-  # For very short queries, do partial name search
-  if name.length < 8
+    # For very short queries, do partial name search
+    if name.length < 8
+      rate_limit
+      response = conn.get("/cards/search", {
+        q: "name:/^#{name}/ game:paper",  # Fixed the typo here
+        unique: "cards"
+      })
+      return response.status == 200 ? JSON.parse(response.body)["data"] : []
+    end
+
+    # For longer queries, get all printings of the exact card
     rate_limit
-    response = conn.get("/cards/search", {
-      q: "name:/^#{name}/",
-      unique: "cards"
-    })
-    return response.status == 200 ? JSON.parse(response.body)["data"] : []
+    fuzzy_response = conn.get("/cards/named", { fuzzy: name })
+
+    if fuzzy_response.status == 200
+      exact_name = JSON.parse(fuzzy_response.body)["name"]
+
+      rate_limit
+      response = conn.get("/cards/search", {
+        q: "!\"#{exact_name}\" game:paper",
+        unique: "prints",
+        order: "released"
+      })
+
+      return JSON.parse(response.body)["data"] if response.status == 200
+    end
+
+    []
+  rescue Faraday::ConnectionFailed => e
+    Rails.logger.error("Connection failed: #{e.message}")
+    []
   end
-
-  # For longer queries, get all printings of the exact card
-  rate_limit
-  fuzzy_response = conn.get("/cards/named", { fuzzy: name })
-
-  if fuzzy_response.status == 200
-    exact_name = JSON.parse(fuzzy_response.body)["name"]
-
-    rate_limit
-    response = conn.get("/cards/search", {
-      q: "!\"#{exact_name}\"",
-      unique: "prints",
-      order: "released"
-    })
-
-    return JSON.parse(response.body)["data"] if response.status == 200
-  end
-
-  []
-rescue Faraday::ConnectionFailed => e
-  Rails.logger.error("Connection failed: #{e.message}")
-  []
-end
 
   def self.call(name)
     response = conn.get("/cards/named", { fuzzy: name })
@@ -68,5 +68,24 @@ end
   rescue Faraday::ConnectionFailed => e
     Rails.logger.error("Connection failed: #{e.message}")
     { error: "Connection failed" }
+  end
+
+  def self.autocomplete(query)
+    rate_limit
+    response = conn.get("/cards/search", {
+      q: "name:/#{query}/ game:paper",
+      unique: "cards",
+      order: "name"
+    })
+
+    if response.status == 200
+      data = JSON.parse(response.body)["data"]
+      data.map { |card| card["name"] }.uniq.sort
+    else
+      []
+    end
+  rescue => e
+    Rails.logger.error("Autocomplete error: #{e.message}")
+    []
   end
 end

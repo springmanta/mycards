@@ -7,7 +7,7 @@
       <div>
         <p class="font-bold">
           <%= number_with_precision(
-                @collection_cards.sum { |cc| cc.card.cardmarket_price.to_f },
+                @collection_cards.sum { |cc| cc.card.cardmarket_price.to_f * cc.quantity },
                 precision: 2
               ) %> €
         </p>

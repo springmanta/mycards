@@ -14,12 +14,14 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root to: "home#index"
-
   resources :collection_cards, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+
+  get "cards/autocomplete", to: "cards#autocomplete"
 
   resources :cards do
     collection do
       get :search
     end
   end
+
 end
