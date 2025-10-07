@@ -1,8 +1,20 @@
 class CardsController < ApplicationController
-  allow_unauthenticated_access only: [:search]
+  allow_unauthenticated_access only: [:search, :autocomplete]
 
   def index
     @cards = Current.user.cards
+  end
+
+  def autocomplete
+    query = params[:q]
+
+    if query.blank? || query.length < 2
+      render json: { data: [] }
+      return
+    end
+
+    response = CardSearch.autocomplete(query)
+    render json: { data: response }
   end
 
   def search

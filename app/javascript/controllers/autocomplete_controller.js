@@ -26,13 +26,13 @@ export default class extends Controller {
 
   async fetchResults(query) {
     try {
-      const response = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`)
+      const response = await fetch(`/cards/autocomplete?q=${encodeURIComponent(query)}`)
       const data = await response.json()
 
       this.displayResults(data.data || [])
     } catch (error) {
       console.error("Autocomplete error:", error)
-      this.hideResults
+      this.hideResults()
     }
   }
 
