@@ -13,8 +13,10 @@ class CardsController < ApplicationController
       return
     end
 
-    response = CardSearch.autocomplete(query)
-    render json: { data: response }
+    # Search local database instead of Scryfall API
+    cards = BulkCard.search_by_name(query).pluck(:name).uniq
+
+    render json: { data: cards }
   end
 
   def search
@@ -30,9 +32,9 @@ class CardsController < ApplicationController
     @cards = []
     @card_name = nil
 
-      result = CardSearch.search_printings(@query)
-      Rails.logger.info "Search result: #{result.inspect}"
-      @cards = result.is_a?(Array) ? result : []
-      @card_name = @cards.first&.dig("name") if @cards.any?
+    result = CardSearch.search_printings(@query)
+    Rails.logger.info "Search result: #{result.inspect}"
+    @cards = result.is_a?(Array) ? result : []
+    @card_name = @cards.first&.dig("name") if @cards.any?
   end
 end
