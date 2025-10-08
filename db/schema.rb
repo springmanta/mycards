@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_05_155454) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_07_223900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -40,6 +40,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_05_155454) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "bulk_cards", force: :cascade do |t|
+    t.string "scryfall_id", null: false
+    t.string "name", null: false
+    t.string "set_code"
+    t.string "collector_number"
+    t.decimal "eur_price", precision: 10, scale: 2
+    t.string "image_uri"
+    t.string "rarity"
+    t.string "type_line"
+    t.string "mana_cost"
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index "lower((name)::text)", name: "index_bulk_cards_on_lower_name"
+    t.index ["name"], name: "index_bulk_cards_on_name"
+    t.index ["scryfall_id"], name: "index_bulk_cards_on_scryfall_id", unique: true
+    t.index ["set_code"], name: "index_bulk_cards_on_set_code"
   end
 
   create_table "card_tags", force: :cascade do |t|
