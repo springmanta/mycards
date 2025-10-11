@@ -26,7 +26,17 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      return unless cookies[:session_id]
+
+      begin
+        session_id = cookies.signed[:session_id]
+      rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveSupport::MessageEncryptor::InvalidMessage => error
+        Rails.logger.warn("Invalid session cookie detected: #{error.class.name}")
+        cookies.delete(:session_id)
+        return
+      end
+
+      Session.find_by(id: session_id) if session_id
     end
 
     def request_authentication
@@ -46,7 +56,7 @@ module Authentication
     end
 
     def terminate_session
-      Current.session.destroy
+      Current.session&.destroy
       cookies.delete(:session_id)
     end
 end
