@@ -1,6 +1,11 @@
 class ApplicationController < ActionController::Base
   include Authentication
   before_action :resume_session
-  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
-  allow_browser versions: :modern
+  
+  # Allow modern browsers but be more lenient with mobile browsers
+  # This prevents 500 errors when accessing from mobile devices
+  allow_browser versions: :modern, only: -> { 
+    # Skip browser check for mobile browsers - they often have different version patterns
+    !request.user_agent&.match?(/Mobile|Android|iPhone|iPad|iPod|BlackBerry|Opera Mini/i)
+  }
 end
