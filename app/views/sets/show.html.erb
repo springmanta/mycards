@@ -1,0 +1,24 @@
+<!-- app/views/sets/show.html.erb -->
+<div class="max-w-7xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-8">
+    <%= link_to "All Sets", sets_path, class: "text-gray-200 hover:text-gray-50 bg-goldenrod hover:bg-golden-brown p-3 rounded-lg" %>
+    <h1 class="text-4xl font-bold mt-4"><%= @set.name %></h1>
+    <p class="text-gray-600 mt-2"><%= @set.code.upcase %> • <%= @cards.count %> cards</p>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <% @cards.each do |card| %>
+      <%= link_to card_path(card), class: "group" do %>
+        <div class="relative overflow-hidden rounded-lg">
+          <%= image_tag card.image_uri,
+              alt: card.name,
+              class: "w-full rounded",
+              loading: "lazy" %>
+        </div>
+        <p class="text-sm text-center mt-2 text-gray-700 group-hover:text-umber truncate">
+          <%= card.name %>
+        </p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

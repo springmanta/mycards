@@ -1,0 +1,18 @@
+<!-- app/views/sets/index.html.erb -->
+<div class="max-w-7xl mx-auto mt-8 px-7 py-8">
+  <h1 class="text-4xl font-bold mb-8 text-center">Magic: The Gathering Sets</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @sets.each do |set| %>
+      <%= link_to set_path(set.code), class: "block bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-umber hover:shadow-lg transition-all" do %>
+        <div class="flex items-center gap-3 mb-2">
+          <% if set.icon_svg_uri %>
+            <%= image_tag set.icon_svg_uri, class: "w-8 h-8", alt: "" %>
+          <% end %>
+          <h3 class="text-xl font-bold"><%= set.name %></h3>
+        </div>
+        <p class="text-sm text-gray-600 font-mono"><%= set.code.upcase %></p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

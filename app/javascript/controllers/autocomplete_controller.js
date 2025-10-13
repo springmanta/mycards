@@ -26,7 +26,7 @@ export default class extends Controller {
 
   async fetchResults(query) {
     try {
-      const response = await fetch(`/cards/autocomplete?q=${encodeURIComponent(query)}`)
+      const response = await fetch(`/cards/autocomplete.json?q=${encodeURIComponent(query)}`)
       const data = await response.json()
 
       this.displayResults(data.data || [])
@@ -36,11 +36,11 @@ export default class extends Controller {
     }
   }
 
-displayResults(cards) {
-  if (cards.length === 0) {
-    this.hideResults()
-    return
-  }
+  displayResults(cards) {
+    if (cards.length === 0) {
+      this.hideResults()
+      return
+    }
 
   const sortedCards = cards.sort((a, b) => a.localeCompare(b))
 
