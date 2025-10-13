@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "sets/index"
+  get "sets/show"
   resource :session, only: [:new, :create, :destroy]
   resources :passwords, param: :token, only: [:new, :create, :edit, :update]
   resource :registration, only: [:new, :create]
@@ -15,6 +17,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root to: "home#index"
   resources :collection_cards, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  resources :sets, param: :code, only: [:index, :show]
 
   get "cards/autocomplete", to: "cards#autocomplete"
 

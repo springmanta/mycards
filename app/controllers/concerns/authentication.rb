@@ -3,7 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
-    helper_method :authenticated?
+    helper_method :authenticated?, :current_user, :user_signed_in?
   end
 
   class_methods do
@@ -23,6 +23,14 @@ module Authentication
 
     def resume_session
       Current.session ||= find_session_by_cookie
+    end
+
+    def current_user
+      Current.session&.user
+    end
+
+    def user_signed_in?
+      current_user.present?
     end
 
     def find_session_by_cookie

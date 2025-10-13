@@ -1,3 +1,39 @@
+# Rake task to import sets
+
+namespace :scryfall do
+  desc "Import set data from Scryfall"
+  task import_sets: :environment do
+    require 'net/http'
+    require 'json'
+    require 'openssl'
+
+    puts "Fetching sets from Scryfall..."
+
+    uri = URI('https://api.scryfall.com/sets')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    request = Net::HTTP::Get.new(uri.request_uri)
+    response = http.request(request)
+    sets_data = JSON.parse(response.body)
+
+    MagicSet.delete_all
+
+    sets_data['data'].each do |set|
+      MagicSet.create!(
+        code: set['code'],
+        name: set['name'],
+        icon_svg_uri: set['icon_svg_uri']  # Add this
+      )
+    end
+
+    puts "✅ Imported #{MagicSet.count} sets"
+  end
+end
+
+# Rake task to import bulk cards
+
 namespace :scryfall do
   desc "Import bulk card data from Scryfall"
   task import_bulk_cards: :environment do
@@ -12,7 +48,7 @@ namespace :scryfall do
     uri = URI('https://api.scryfall.com/bulk-data')
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE  # Bypass SSL verification
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     request = Net::HTTP::Get.new(uri.request_uri)
     response = http.request(request)
