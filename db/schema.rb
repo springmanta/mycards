@@ -55,6 +55,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_15_185344) do
     t.jsonb "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "set_name"
     t.index "lower((name)::text)", name: "index_bulk_cards_on_lower_name"
     t.index ["name"], name: "index_bulk_cards_on_name"
     t.index ["scryfall_id"], name: "index_bulk_cards_on_scryfall_id", unique: true

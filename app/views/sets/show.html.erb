@@ -1,7 +1,7 @@
 <!-- app/views/sets/show.html.erb -->
 <div class="max-w-7xl mx-auto mt-8 px-7 py-8">
   <div class="mb-8">
-    <%= link_to "← All Sets", sets_path, class: "text-umber hover:text-golden-brown font-semibold" %>
+    <%= link_to "All Sets", sets_path, class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
     <div class="flex items-center gap-3 mt-4">
       <% if @set.icon_svg_uri %>
         <%= image_tag @set.icon_svg_uri, class: "w-12 h-12", alt: "" %>
@@ -48,7 +48,7 @@
       <div>
         <%= f.select :sort,
             [
-              ['Collector #', 'collector_asc'],
+              ['Collector Number', 'collector_asc'],
               ['Name (A-Z)', 'name_asc'],
               ['Name (Z-A)', 'name_desc']
             ],
@@ -75,8 +75,12 @@
         <div class="relative overflow-hidden rounded-lg">
           <%= image_tag card.image_uri,
               alt: card.name,
-              class: "w-full rounded-lg shadow-md group-hover:scale-105 transition-transform duration-200",
+              class: "w-full rounded-lg shadow-md",
               loading: "lazy" %>
+
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
+              <span class="text-white text-md font-semibold">View Card</span>
+            </div>
         </div>
         <p class="text-sm text-center mt-2 text-gray-700 group-hover:text-umber truncate font-semibold">
           <%= card.name %>

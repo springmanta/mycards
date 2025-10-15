@@ -14,6 +14,9 @@ class SetsController < ApplicationController
       @sets = @sets.where("name ILIKE ?", "#{params[:letter]}%")
     end
 
+    if params[:q].blank? && params[:letter].blank?
+      @sets = @sets.order(name: :asc)
+    else
     # Sorting
     @sets = case params[:sort]
     when 'name_desc'
@@ -25,6 +28,7 @@ class SetsController < ApplicationController
     else
       @sets.order(name: :asc)
     end
+  end
   end
 
   def show
@@ -58,4 +62,26 @@ class SetsController < ApplicationController
       @cards.order(Arel.sql("CAST(NULLIF(regexp_replace(collector_number, '[^0-9]', '', 'g'), '') AS INTEGER) ASC"))
     end
   end
+
+  def autocomplete
+  query = params[:q]
+
+  if query.blank? || query.length < 2
+    render json: { data: [] }
+    return
+  end
+
+  sets = MagicSet.where("name ILIKE ?", "%#{query}%")
+                 .limit(10)
+                 .select(:code, :name, :icon_svg_uri)
+                 .map do |set|
+    {
+      code: set.code,
+      name: set.name,
+      icon_svg_uri: set.icon_svg_uri
+    }
+  end
+
+  render json: { data: sets }
+end
 end

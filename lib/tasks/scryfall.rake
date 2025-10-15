@@ -20,13 +20,23 @@ namespace :scryfall do
 
     MagicSet.delete_all
 
+    imported = 0
+    skipped = 0
+
     sets_data["data"].each do |set|
+      unless set["digital"] == false
+        skipped += 1
+        next
+      end
+
       MagicSet.create!(
         code: set["code"],
         name: set["name"],
         icon_svg_uri: set["icon_svg_uri"],
         released_at: set["released_at"]
       )
+
+      imported += 1
     end
 
     puts "✅ Imported #{MagicSet.count} sets"
