@@ -1,7 +1,54 @@
 <!-- app/views/sets/index.html.erb -->
 <div class="max-w-7xl mx-auto mt-8 px-7 py-8">
-  <h1 class="text-4xl font-bold mb-8 text-center">Magic: The Gathering Sets</h1>
+  <!-- Header -->
+  <h1 class="text-4xl font-bold mb-6">Magic: The Gathering Sets</h1>
 
+  <!-- Search & Sort Bar -->
+  <!-- In sets/index.html.erb -->
+  <%= form_with url: sets_path, method: :get, class: "mb-6", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
+    <div class="flex flex-col md:flex-row gap-4">
+      <div class="flex-1">
+        <%= f.text_field :q,
+            value: params[:q],
+            placeholder: "Search sets...",
+            class: "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none" %>
+      </div>
+        <div class="w-full md:w-48">
+          <%= f.select :sort,
+              [
+                ['Name (A-Z)', 'name_asc'],
+                ['Name (Z-A)', 'name_desc'],
+                ['Newest First', 'released_desc'],
+                ['Oldest First', 'released_asc']
+              ],
+              { selected: params[:sort] || 'name_asc' },
+              {
+                class: "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none",
+                data: { action: "change->auto-submit#submit" }
+              } %>
+        </div>
+      <%= f.submit "Search", class: "px-6 py-3 bg-umber text-white rounded-xl font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
+
+      <% if params[:q].present? || params[:letter].present? || params[:sort] != 'name_asc' %>
+        <%= link_to "Clear", sets_path, class: "px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors text-center" %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <!-- Alphabet Filter -->
+  <div class="flex flex-wrap gap-2 mb-6 bg-white rounded-xl p-4 border-2 border-gray-200">
+    <%# <span class="text-sm font-semibold text-gray-600 mr-2">Filter by letter:</span> %>
+    <%= link_to "All", sets_path(sort: params[:sort], q: params[:q]),
+        class: "px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors #{params[:letter].blank? ? 'bg-umber text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    <% ('A'..'Z').each do |letter| %>
+      <%= link_to letter, sets_path(letter: letter, sort: params[:sort], q: params[:q]),
+          class: "px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors #{params[:letter] == letter ? 'bg-umber text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}" %>
+    <% end %>
+  </div>
+
+  <p class="text-gray-600 mb-6">Showing <%= @sets.count %> sets</p>
+
+  <!-- Sets Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     <% @sets.each do |set| %>
       <%= link_to set_path(set.code), class: "block bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-umber hover:shadow-lg transition-all" do %>
@@ -9,9 +56,20 @@
           <% if set.icon_svg_uri %>
             <%= image_tag set.icon_svg_uri, class: "w-8 h-8", alt: "" %>
           <% end %>
-          <h3 class="text-xl font-bold"><%= set.name %></h3>
+          <h3 class="text-xl font-bold flex-1"><%= set.name %></h3>
         </div>
         <p class="text-sm text-gray-600 font-mono"><%= set.code.upcase %></p>
+        <% if set.released_at %>
+          <p class="text-sm text-gray-500 mt-2">
+            <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <%= set.released_at.strftime("%B %Y") %>
+          </p>
+        <% end %>
+        <p class="text-sm text-gray-500 mt-1">
+          <%= set.bulk_cards.count %> cards
+        </p>
       <% end %>
     <% end %>
   </div>

@@ -1,22 +1,88 @@
 <!-- app/views/sets/show.html.erb -->
 <div class="max-w-7xl mx-auto mt-8 px-7 py-8">
   <div class="mb-8">
-    <%= link_to "All Sets", sets_path, class: "text-gray-200 hover:text-gray-50 bg-goldenrod hover:bg-golden-brown p-3 rounded-lg" %>
-    <h1 class="text-4xl font-bold mt-4"><%= @set.name %></h1>
-    <p class="text-gray-600 mt-2"><%= @set.code.upcase %> • <%= @cards.count %> cards</p>
+    <%= link_to "← All Sets", sets_path, class: "text-umber hover:text-golden-brown font-semibold" %>
+    <div class="flex items-center gap-3 mt-4">
+      <% if @set.icon_svg_uri %>
+        <%= image_tag @set.icon_svg_uri, class: "w-12 h-12", alt: "" %>
+      <% end %>
+      <div>
+        <h1 class="text-4xl font-bold"><%= @set.name %></h1>
+        <p class="text-gray-600 mt-1">
+          <%= @set.code.upcase %>
+          <% if @set.released_at %>
+            • <%= @set.released_at.strftime("%B %d, %Y") %>
+          <% end %>
+          • <%= @cards.count %> cards
+        </p>
+      </div>
+    </div>
   </div>
 
+  <!-- Filters -->
+  <%= form_with url: set_path(@set.code), method: :get, class: "mb-6 bg-white rounded-xl p-6 border-2 border-gray-200", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="lg:col-span-2">
+        <%= f.text_field :q,
+            value: params[:q],
+            placeholder: "Search cards in this set...",
+            class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" %>
+      </div>
+
+      <div>
+        <%= f.select :rarity,
+            [
+              ['All Rarities', ''],
+              ['Common', 'common'],
+              ['Uncommon', 'uncommon'],
+              ['Rare', 'rare'],
+              ['Mythic', 'mythic']
+            ],
+            { selected: params[:rarity] },
+            {
+              class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none",
+              data: { action: "change->auto-submit#submit" }
+            } %>
+      </div>
+
+      <div>
+        <%= f.select :sort,
+            [
+              ['Collector #', 'collector_asc'],
+              ['Name (A-Z)', 'name_asc'],
+              ['Name (Z-A)', 'name_desc']
+            ],
+            { selected: params[:sort] || 'collector_asc' },
+            {
+              class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none",
+              data: { action: "change->auto-submit#submit" }
+            } %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "flex-1 px-6 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
+        <% if params[:q].present? || params[:rarity].present? || params[:sort] != 'collector_asc' %>
+          <%= link_to "Clear", set_path(@set.code), class: "px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Cards Grid -->
   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
     <% @cards.each do |card| %>
       <%= link_to card_path(card), class: "group" do %>
         <div class="relative overflow-hidden rounded-lg">
           <%= image_tag card.image_uri,
               alt: card.name,
-              class: "w-full rounded",
+              class: "w-full rounded-lg shadow-md group-hover:scale-105 transition-transform duration-200",
               loading: "lazy" %>
         </div>
-        <p class="text-sm text-center mt-2 text-gray-700 group-hover:text-umber truncate">
+        <p class="text-sm text-center mt-2 text-gray-700 group-hover:text-umber truncate font-semibold">
           <%= card.name %>
+        </p>
+        <p class="text-xs text-center text-gray-500 capitalize">
+          <%= card.rarity %>
         </p>
       <% end %>
     <% end %>

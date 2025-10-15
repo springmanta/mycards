@@ -3,13 +3,13 @@
 namespace :scryfall do
   desc "Import set data from Scryfall"
   task import_sets: :environment do
-    require 'net/http'
-    require 'json'
-    require 'openssl'
+    require "net/http"
+    require "json"
+    require "openssl"
 
     puts "Fetching sets from Scryfall..."
 
-    uri = URI('https://api.scryfall.com/sets')
+    uri = URI("https://api.scryfall.com/sets")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -20,11 +20,12 @@ namespace :scryfall do
 
     MagicSet.delete_all
 
-    sets_data['data'].each do |set|
+    sets_data["data"].each do |set|
       MagicSet.create!(
-        code: set['code'],
-        name: set['name'],
-        icon_svg_uri: set['icon_svg_uri']  # Add this
+        code: set["code"],
+        name: set["name"],
+        icon_svg_uri: set["icon_svg_uri"],
+        released_at: set["released_at"]
       )
     end
 
@@ -37,15 +38,15 @@ end
 namespace :scryfall do
   desc "Import bulk card data from Scryfall"
   task import_bulk_cards: :environment do
-    require 'net/http'
-    require 'json'
-    require 'zlib'
-    require 'openssl'
+    require "net/http"
+    require "json"
+    require "zlib"
+    require "openssl"
 
     puts "Fetching bulk data info from Scryfall..."
 
     # Get the bulk data download URL
-    uri = URI('https://api.scryfall.com/bulk-data')
+    uri = URI("https://api.scryfall.com/bulk-data")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -55,8 +56,8 @@ namespace :scryfall do
     bulk_data = JSON.parse(response.body)
 
     # Find the "Default Cards" bulk data (paper cards only)
-    default_cards = bulk_data['data'].find { |item| item['type'] == 'default_cards' }
-    download_uri = URI(default_cards['download_uri'])
+    default_cards = bulk_data["data"].find { |item| item["type"] == "default_cards" }
+    download_uri = URI(default_cards["download_uri"])
 
     puts "Downloading bulk data (~150MB, this will take a few minutes)..."
     puts "URL: #{download_uri}"
@@ -80,20 +81,20 @@ namespace :scryfall do
     cards.each_slice(batch_size) do |batch|
       records = batch.map do |card|
         # Skip digital-only cards
-        next if card['digital'] == true
-        next unless card['games']&.include?('paper')
+        next if card["digital"] == true
+        next unless card["games"]&.include?("paper")
 
         {
-          scryfall_id: card['id'],
-          name: card['name'],
-          set_code: card['set'],
-          collector_number: card['collector_number'],
-          eur_price: card.dig('prices', 'eur')&.to_f,
-          image_uri: card.dig('image_uris', 'normal') || card.dig('card_faces', 0, 'image_uris', 'normal'),
-          rarity: card['rarity'],
-          type_line: card['type_line'],
-          mana_cost: card['mana_cost'],
-          metadata: card.slice('oracle_text', 'power', 'toughness', 'loyalty', 'colors', 'color_identity'),
+          scryfall_id: card["id"],
+          name: card["name"],
+          set_code: card["set"],
+          collector_number: card["collector_number"],
+          eur_price: card.dig("prices", "eur")&.to_f,
+          image_uri: card.dig("image_uris", "normal") || card.dig("card_faces", 0, "image_uris", "normal"),
+          rarity: card["rarity"],
+          type_line: card["type_line"],
+          mana_cost: card["mana_cost"],
+          metadata: card.slice("oracle_text", "power", "toughness", "loyalty", "colors", "color_identity"),
           created_at: Time.current,
           updated_at: Time.current
         }
