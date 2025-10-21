@@ -45,6 +45,10 @@ class SetsController < ApplicationController
       @cards = @cards.where(rarity: params[:rarity])
     end
 
+    # Filter by type
+    if params[:type].present?
+      @cards = @cards.where("type_line ILIKE ?", "%#{params[:type]}%")
+    end
     # Filter by color
     if params[:color].present?
       @cards = @cards.where("metadata -> 'colors' @> ?", "[\"#{params[:color]}\"]")

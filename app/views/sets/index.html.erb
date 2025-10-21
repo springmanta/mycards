@@ -1,7 +1,7 @@
 <!-- app/views/sets/index.html.erb -->
 <div class="max-w-7xl mx-auto mt-8 px-7 py-8">
   <!-- Header -->
-  <h1 class="text-4xl font-bold mb-6">Magic: The Gathering Sets</h1>
+  <h1 class="text-4xl font-display font-bold mb-6">Magic: The Gathering Sets</h1>
 
   <!-- Advanced Search Container -->
   <div class="bg-gray-50 px-4 pt-6 rounded-lg">
@@ -36,11 +36,10 @@
               ],
               { selected: params[:sort] || 'name_asc' },
               {
-                class: "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none",
+                class: "w-full font-display px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none",
                 data: { action: "change->auto-submit#submit" }
               } %>
         </div>
-
         <%= f.submit "Search", class: "px-6 py-3 bg-umber text-white rounded-xl font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
 
         <% if params[:q].present? || params[:letter].present? || params[:sort] != 'name_asc' %>
@@ -70,7 +69,7 @@
           <% if set.icon_svg_uri %>
             <%= image_tag set.icon_svg_uri, class: "w-8 h-8", alt: "" %>
           <% end %>
-          <h3 class="text-xl font-bold flex-1"><%= set.name %></h3>
+          <h3 class="text-xl font-display flex-1"><%= set.name %></h3>
         </div>
         <p class="text-sm text-gray-600 font-mono"><%= set.code.upcase %></p>
         <% if set.released_at %>
@@ -81,7 +80,7 @@
             <%= set.released_at.strftime("%B %Y") %>
           </p>
         <% end %>
-        <p class="text-sm text-gray-500 mt-1">
+        <p class="text-sm font-display text-gray-500 mt-1">
           <%= set.bulk_cards.count %> cards
         </p>
       <% end %>
