@@ -14,4 +14,6 @@
   --color-rose-ebony: #734F50;
   --color-eggplant: #664455;
   --color-violet: #593959;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-display: Poppins, system-ui, sans-serif;
 }

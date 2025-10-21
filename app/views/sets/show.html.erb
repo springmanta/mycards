@@ -20,7 +20,7 @@
   </div>
 
   <!-- Filters -->
-  <%= form_with url: set_path(@set.code), method: :get, class: "mb-6 bg-white rounded-xl p-6 border-2 border-gray-200", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
+  <%= form_with url: set_path(@set.code), method: :get, class: "mb-6 bg-white rounded-xl pt-6 px-6 p-2 border-2 border-gray-200", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
       <div class="lg:col-span-2">
         <%= f.text_field :q,
@@ -46,6 +46,26 @@
       </div>
 
       <div>
+      <%= f.select :type,
+          [
+            ['All Types', ''],
+            ['Creature', 'Creature'],
+            ['Instant', 'Instant'],
+            ['Sorcery', 'Sorcery'],
+            ['Enchantment', 'Enchantment'],
+            ['Artifact', 'Artifact'],
+            ['Planeswalker', 'Planeswalker'],
+            ['Land', 'Land'],
+            ['Battle', 'Battle']
+          ],
+          { selected: params[:type] },
+          {
+            class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none",
+            data: { action: "change->auto-submit#submit" }
+          } %>
+      </div>
+
+      <div>
         <%= f.select :sort,
             [
               ['Collector Number', 'collector_asc'],
@@ -60,7 +80,7 @@
       </div>
 
       <div class="flex gap-2">
-        <%= f.submit "Filter", class: "flex-1 px-6 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
+        <%#= f.submit "Filter", class: "flex-1 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
         <% if params[:q].present? || params[:rarity].present? || params[:sort] != 'collector_asc' %>
           <%= link_to "Clear", set_path(@set.code), class: "px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors" %>
         <% end %>
@@ -79,7 +99,7 @@
               loading: "lazy" %>
 
             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
-              <span class="text-white text-md font-semibold">View Card</span>
+              <span class="text-white text-md font-semibold">Details</span>
             </div>
         </div>
         <p class="text-sm text-center mt-2 text-gray-700 group-hover:text-umber truncate font-semibold">
