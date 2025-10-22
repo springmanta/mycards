@@ -48,7 +48,7 @@ export default class extends Controller {
     <div class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
          data-action="click->autocomplete#selectCard"
          data-card-name="${card}">
-      <span class="italic">${card}</span>
+      <span class="font-sans font-extralight">${card}</span>
     </div>
   `).join('')
 

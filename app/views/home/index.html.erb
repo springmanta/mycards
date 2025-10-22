@@ -7,8 +7,10 @@
 
   <!-- Content -->
   <div class="relative z-10 w-full max-w-4xl mx-auto px-4 text-center text-white">
-    <h1 class="text-5xl font-display font-bold mb-4">myCards</h1>
-    <p class="text-xl font-sans mb-8 text-gray-200">They deserve better than a shoebox.</p>
+    <div class="flex justify-center items-center">
+      <%= image_tag "logo.png", class: "w-75 h-75", alt: "" %>
+    </div>
+  <p class="text-xl font-sans mb-8 text-goldenrod">Better than a shoebox.</p>
 
     <!-- Search with autocomplete -->
     <div data-controller="autocomplete" class="max-w-2xl mx-auto relative">
@@ -24,7 +26,7 @@
             } %>
 
         <div data-autocomplete-target="results"
-             class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-2">
+          class="hidden absolute z-10 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto mt-2">
         </div>
       <% end %>
 
