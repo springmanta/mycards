@@ -32,7 +32,7 @@
       <div>
         <%= f.select :rarity,
             [
-              ['All Rarities', ''],
+              ['Rarities', ''],
               ['Common', 'common'],
               ['Uncommon', 'uncommon'],
               ['Rare', 'rare'],
@@ -48,7 +48,7 @@
       <div>
       <%= f.select :type,
           [
-            ['All Types', ''],
+            ['Types', ''],
             ['Creature', 'Creature'],
             ['Instant', 'Instant'],
             ['Sorcery', 'Sorcery'],
@@ -80,7 +80,7 @@
       </div>
 
       <div class="flex gap-2">
-        <%#= f.submit "Filter", class: "flex-1 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
+        <%= f.submit "Filter", class: "flex-1 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
         <% if params[:q].present? || params[:rarity].present? || params[:sort] != 'collector_asc' %>
           <%= link_to "Clear", set_path(@set.code), class: "px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors" %>
         <% end %>
