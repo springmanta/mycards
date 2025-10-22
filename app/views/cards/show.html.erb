@@ -67,7 +67,7 @@
 
       <!-- Add to Collection Form -->
     <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
-      <h3 class="font-bold mb-4">Add to Your Collection</h3>
+      <h3 class="font-bold mb-4 text-rose-ebony">Add to Your Collection</h3>
 
       <%= form_with model: CollectionCard.new, url: collection_cards_path, method: :post, class: "space-y-4" do |f| %>
         <%= f.hidden_field :bulk_card_id, value: @card.id %>

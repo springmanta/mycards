@@ -27,6 +27,26 @@
   </div>
 
   <!-- Filters -->
+
+  <div data-controller="toggle" data-toggle-open-value="<%= params[:q].present? || params[:rarity].present? || params[:type].present? || params[:colors].present? %>">
+    <button type="button"
+            data-action="click->toggle#toggle"
+            class="w-full mb-4 flex items-center justify-between bg-gray-50 rounded-xl p-2 border-2 border-gray-200 hover:border-umber hover:text-goldenrod transition-colors cursor-pointer">
+      <span class="font-semibold text-gray-700 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+        </svg>
+        Filters
+        <% if params[:q].present? || params[:rarity].present? || params[:type].present? || params[:colors].present? %>
+          <span class="px-2 py-0.5 bg-umber text-white text-xs rounded-full">Active</span>
+        <% end %>
+      </span>
+      <svg data-toggle-target="icon" class="w-5 h-5 text-gray-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </button>
+
+  <div data-toggle-target="content" class="hidden">
   <%= form_with url: collection_cards_path, method: :get, class: "mb-6 bg-white rounded-xl p-6 border-2 border-gray-200", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
     <%= f.hidden_field :view, value: @view_mode %>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -80,6 +100,7 @@
       </div>
     </div>
   <% end %>
+  </div>
 
   <% if @collection_cards.empty? %>
     <div class="bg-gray-100 border border-gray-300 text-gray-700 px-6 py-6 rounded text-center">
