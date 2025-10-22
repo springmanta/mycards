@@ -14,21 +14,17 @@ class SetsController < ApplicationController
       @sets = @sets.where("name ILIKE ?", "#{params[:letter]}%")
     end
 
-    if params[:q].blank? && params[:letter].blank?
-      @sets = @sets.order(name: :asc)
-    else
-    # Sorting
+    # Sorting - always apply, regardless of filters
     @sets = case params[:sort]
     when 'name_desc'
       @sets.order(name: :desc)
     when 'released_asc'
-      @sets.order(released_at: :asc, name: :asc)
+      @sets.order(Arel.sql('released_at ASC NULLS LAST, name ASC'))
     when 'released_desc'
-      @sets.order(released_at: :desc, name: :asc)
+      @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
     else
-      @sets.order(name: :asc)
+      @sets.order(name: :asc) # Default A-Z
     end
-  end
   end
 
   def show

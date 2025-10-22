@@ -3,11 +3,44 @@ class CollectionCardsController < ApplicationController
   before_action :set_collection_card, only: [:show, :edit, :update, :destroy]
 
   def index
-    @collections = Current.user.collections.includes(collection_cards: :card)
-    @collection_cards = @collections.flat_map(&:collection_cards).sort_by(&:created_at).reverse
-    @collection = @collections.first
-    @view_mode = params[:view] || 'list'
+  @collections = Current.user.collections.includes(collection_cards: :card)
+  @collection_cards = @collections.flat_map(&:collection_cards)
+  @collection = @collections.first
+  @view_mode = params[:view] || 'list'
+
+  # Search by card name
+  if params[:q].present?
+    @collection_cards = @collection_cards.select { |cc| cc.card.name.downcase.include?(params[:q].downcase) }
   end
+
+  # Filter by rarity
+  if params[:rarity].present?
+    @collection_cards = @collection_cards.select { |cc| cc.card.rarity == params[:rarity] }
+  end
+
+  # Filter by type
+  if params[:type].present?
+    @collection_cards = @collection_cards.select { |cc| cc.card.type_line&.include?(params[:type]) }
+  end
+
+  # Sorting
+  @collection_cards = case params[:sort]
+  when 'name_asc'
+    @collection_cards.sort_by { |cc| cc.card.name }
+  when 'name_desc'
+    @collection_cards.sort_by { |cc| cc.card.name }.reverse
+  when 'set_asc'
+    @collection_cards.sort_by { |cc| cc.card.set_name || '' }
+  when 'set_desc'
+    @collection_cards.sort_by { |cc| cc.card.set_name || '' }.reverse
+  when 'price_asc'
+    @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }
+  when 'price_desc'
+    @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }.reverse
+  else
+    @collection_cards.sort_by(&:created_at).reverse # Most recent first by default
+  end
+end
 
   def show
     @collection_card = CollectionCard.includes(:card, :collection).find(params[:id])

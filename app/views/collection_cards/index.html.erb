@@ -1,7 +1,8 @@
+<!-- app/views/collection_cards/index.html.erb -->
 <div class="max-w-7xl mx-auto px-4 py-8">
   <div class="mb-8 flex justify-between items-center">
     <div>
-      <h1 class="text-3xl font-bold mb-2"><%= @collection.name %></h1>
+      <h1 class="text-3xl font-display font-bold mb-2"><%= @collection.name %></h1>
       <p class="text-gray-600 font-bold"><%= @collection_cards.sum(&:quantity) %> total cards</p>
       <p class="text-gray-600">Collection value</p>
       <div>
@@ -17,30 +18,112 @@
     <div class="flex gap-4 items-center">
       <!-- View toggle -->
       <div class="flex gap-2">
-        <%= link_to "List", collection_cards_path(view: 'list'),
+        <%= link_to "List", collection_cards_path(view: 'list', sort: params[:sort], q: params[:q], rarity: params[:rarity], type: params[:type], set: params[:set]),
             class: "px-3 py-1 rounded #{@view_mode == 'list' ? 'bg-goldenrod text-white' : 'bg-gray-200 hover:bg-gray-100'}" %>
-        <%= link_to "Grid", collection_cards_path(view: 'grid'),
+        <%= link_to "Grid", collection_cards_path(view: 'grid', sort: params[:sort], q: params[:q], rarity: params[:rarity], type: params[:type], set: params[:set]),
             class: "px-3 py-1 rounded #{@view_mode == 'grid' ? 'bg-goldenrod text-white' : 'bg-gray-200 hover:bg-gray-100'}" %>
       </div>
     </div>
   </div>
 
+  <!-- Filters -->
+  <%= form_with url: collection_cards_path, method: :get, class: "mb-6 bg-white rounded-xl p-6 border-2 border-gray-200", data: { turbo_frame: "_top", controller: "auto-submit" } do |f| %>
+    <%= f.hidden_field :view, value: @view_mode %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div class="lg:col-span-2">
+        <%= f.text_field :q,
+            value: params[:q],
+            placeholder: "Search cards in your collection...",
+            class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" %>
+      </div>
+
+      <div>
+        <%= f.select :rarity,
+            [
+              ['All Rarities', ''],
+              ['Common', 'common'],
+              ['Uncommon', 'uncommon'],
+              ['Rare', 'rare'],
+              ['Mythic', 'mythic']
+            ],
+            { selected: params[:rarity] },
+            {
+              class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none",
+              data: { action: "change->auto-submit#submit" }
+            } %>
+      </div>
+
+      <div>
+        <%= f.select :type,
+            [
+              ['All Types', ''],
+              ['Creature', 'Creature'],
+              ['Instant', 'Instant'],
+              ['Sorcery', 'Sorcery'],
+              ['Enchantment', 'Enchantment'],
+              ['Artifact', 'Artifact'],
+              ['Planeswalker', 'Planeswalker'],
+              ['Land', 'Land']
+            ],
+            { selected: params[:type] },
+            {
+              class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none",
+              data: { action: "change->auto-submit#submit" }
+            } %>
+      </div>
+
+      <div class="flex gap-2">
+        <%= f.submit "Filter", class: "flex-1 px-6 py-2.5 bg-umber text-white rounded-lg font-semibold hover:bg-golden-brown transition-colors cursor-pointer" %>
+        <% if params[:q].present? || params[:rarity].present? || params[:type].present? %>
+          <%= link_to "Clear", collection_cards_path(view: @view_mode), class: "px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors" %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <% if @collection_cards.empty? %>
     <div class="bg-gray-100 border border-gray-300 text-gray-700 px-6 py-6 rounded text-center">
-      <p class="text-xl text-goldenrod font-bold">Your collection is empty</p>
+      <p class="text-xl text-goldenrod font-bold">
+        <% if params[:q].present? || params[:rarity].present? || params[:type].present? %>
+          No cards match your filters
+        <% else %>
+          Your collection is empty
+        <% end %>
+      </p>
     </div>
   <% else %>
     <div data-controller="confirm">
       <% if @view_mode == 'list' %>
-        <!-- List view -->
+        <!-- List view with sortable headers -->
         <div class="bg-gray-100 rounded-md overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gradient-to-r from-yellow-600 to-umber shadow-lg text-gray-50 font-extralight">
               <tr>
-                <th class="px-4 py-3 text-left">Name</th>
-                <th class="px-4 py-3 text-left">Set</th>
+                <th class="px-4 py-3 text-left">
+                  <%= link_to collection_cards_path(sort: params[:sort] == 'name_asc' ? 'name_desc' : 'name_asc', view: @view_mode, q: params[:q], rarity: params[:rarity], type: params[:type]), class: "flex items-center gap-1 hover:text-yellow-300" do %>
+                    Name
+                    <% if params[:sort]&.start_with?('name') %>
+                      <span><%= params[:sort] == 'name_asc' ? '↑' : '↓' %></span>
+                    <% end %>
+                  <% end %>
+                </th>
+                <th class="px-4 py-3 text-left">
+                  <%= link_to collection_cards_path(sort: params[:sort] == 'set_asc' ? 'set_desc' : 'set_asc', view: @view_mode, q: params[:q], rarity: params[:rarity], type: params[:type]), class: "flex items-center gap-1 hover:text-yellow-300" do %>
+                    Set
+                    <% if params[:sort]&.start_with?('set') %>
+                      <span><%= params[:sort] == 'set_asc' ? '↑' : '↓' %></span>
+                    <% end %>
+                  <% end %>
+                </th>
                 <th class="px-4 py-3 text-left">Qty</th>
-                <th class="px-4 py-3 text-center">Price</th>
+                <th class="px-4 py-3 text-center">
+                  <%= link_to collection_cards_path(sort: params[:sort] == 'price_asc' ? 'price_desc' : 'price_asc', view: @view_mode, q: params[:q], rarity: params[:rarity], type: params[:type]), class: "flex items-center justify-center gap-1 hover:text-yellow-300" do %>
+                    Price
+                    <% if params[:sort]&.start_with?('price') %>
+                      <span><%= params[:sort] == 'price_asc' ? '↑' : '↓' %></span>
+                    <% end %>
+                  <% end %>
+                </th>
                 <th class="px-4 py-3 text-center">Condition</th>
                 <th class="px-4 py-3 text-center">Foil?</th>
                 <th class="px-4 py-3 text-left">Actions</th>
@@ -49,7 +132,7 @@
             <tbody>
               <% @collection_cards.each do |cc| %>
                 <tr class="hover:bg-gray-50">
-                  <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc) %></td>
+                  <td class="px-3 py-2 font-bold text-sm"><%= link_to cc.card.name, collection_card_path(cc), class: "hover:text-umber" %></td>
                   <td class="px-3 py-2 text-sm text-gray-600"><%= cc.card.set_name %></td>
                   <td class="px-3 py-2 text-sm text-left"><%= cc.quantity %></td>
                   <td class="px-3 py-2 text-sm text-center">
@@ -63,14 +146,14 @@
                   <td class="px-3 py-2 text-sm text-center"><%= cc.foil ? "✓" : "-" %></td>
                   <td class="px-4 py-3">
                     <div class="flex gap-2 items-center">
-                      <%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600" %>
+                      <%= link_to "✏️", edit_collection_card_path(cc), class: "text-blue-600 hover:text-blue-800" %>
                       <%= button_to "🗑️", collection_card_path(cc),
                           method: :delete,
                           data: {
                             action: "click->confirm#show",
                             card_name: cc.card.name
                           },
-                          class: "text-red-600 p-0 bg-transparent border-none cursor-pointer",
+                          class: "text-red-600 hover:text-red-800 p-0 bg-transparent border-none cursor-pointer",
                           form: { class: "inline" } %>
                     </div>
                   </td>
