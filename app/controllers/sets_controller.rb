@@ -2,16 +2,16 @@ class SetsController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    @sets = MagicSet.all
+    @sets = MagicSet.joins(:bulk_cards).distinct
 
     # Search by name
     if params[:q].present?
-      @sets = @sets.where("name ILIKE ?", "%#{params[:q]}%")
+      @sets = @sets.where("magic_sets.name ILIKE ?", "%#{params[:q]}%")
     end
 
     # Filter by first letter
     if params[:letter].present?
-      @sets = @sets.where("name ILIKE ?", "#{params[:letter]}%")
+      @sets = @sets.where("magic_sets.name ILIKE ?", "#{params[:letter]}%")
     end
 
     # Sorting - always apply, regardless of filters
@@ -23,7 +23,7 @@ class SetsController < ApplicationController
     when 'released_desc'
       @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
     else
-      @sets.order(name: :asc) # Default A-Z
+      @sets.order('magic_sets.name ASC') # Default A-Z
     end
   end
 
