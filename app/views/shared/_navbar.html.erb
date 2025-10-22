@@ -2,16 +2,19 @@
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between items-center h-16">
       <!-- Logo -->
-      <%= link_to root_path, class: "text-white font-display font-bold text-xl hover:text-goldenrod transition-colors flex-shrink-0" do %>
-        myCards
-      <% end %>
-
+    <div class="flex items-center flex-shrink-0">
+      <%= image_tag "logo_icon.png",
+            alt: "myCards",
+            class: "h-10 w-auto" %>
+      <%= link_to "myCards", root_path,
+            class: "font-display text-white text-lg hover:text-goldenrod transition-colors" %>
+    </div>
       <!-- Desktop Navigation -->
       <div class="hidden md:flex items-center gap-6 flex-1 justify-center">
-        <%= link_to "Browse Sets", sets_path, class: "text-gray-200 font-display hover:text-goldenrod transition-colors" %>
+        <%= link_to "Browse Sets", sets_path, class: "text-gray-200 font-sans hover:text-goldenrod transition-colors" %>
 
         <% if Current.user %>
-          <%= link_to "My Collection", collection_cards_path, class: "text-gray-200 font-display hover:text-goldenrod transition-colors" %>
+          <%= link_to "My Collection", collection_cards_path, class: "text-gray-200 font-sans hover:text-goldenrod transition-colors" %>
         <% end %>
       </div>
 
@@ -50,11 +53,11 @@
 
             <div data-dropdown-target="menu"
                  class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
-              <%= link_to "My Collection", collection_cards_path, class: "block font-display px-4 py-2 text-gray-700 hover:bg-gray-100" %>
-              <hr class="my-1">
+              <%= link_to "Browse Sets", sets_path, class: "block font-sans px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-goldenrod" %>
+              <%= link_to "My Collection", collection_cards_path, class: "block font-sans px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-goldenrod" %>
               <%= button_to "Sign Out", session_path, method: :delete,
-                  class: "w-full font-display text-left px-4 py-2 text-gray-700 hover:bg-goldenrod cursor-pointer",
-                  form_class: "w-full font-display" %>
+                  class: "w-full font-display text-left px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-goldenrod cursor-pointer",
+                  form_class: "w-full" %>
             </div>
           </div>
         <% else %>
@@ -102,8 +105,8 @@
           <%= button_to "Sign Out", session_path, method: :delete,
               class: "w-full text-left text-gray-200 hover:text-white py-2 bg-transparent border-none cursor-pointer" %>
         <% else %>
-          <%= link_to "Sign In", new_session_path, class: "block font-display text-gray-200 hover:text-goldenrod py-2" %>
-          <%= link_to "Sign Up", new_registration_path, class: "block font-display bg-yellow-800 text-gray-200 px-4 py-2 rounded-lg hover:bg-rose-ebony font-semibold text-center mt-2" %>
+          <%= link_to "Sign In", new_session_path, class: "block font-sans text-gray-200 hover:text-goldenrod py-2" %>
+          <%= link_to "Sign Up", new_registration_path, class: "block font-sans bg-yellow-800 text-gray-200 px-4 py-2 rounded-lg hover:bg-rose-ebony font-semibold text-center mt-2" %>
         <% end %>
       </div>
     </div>
