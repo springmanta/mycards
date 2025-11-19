@@ -84,6 +84,9 @@ namespace :scryfall do
 
     puts "Processing #{cards.size} cards..."
 
+    puts "Deleting existing cards..."
+    BulkCard.delete_all
+
     imported = 0
     skipped = 0
     batch_size = 1000
@@ -104,7 +107,7 @@ namespace :scryfall do
           rarity: card["rarity"],
           type_line: card["type_line"],
           mana_cost: card["mana_cost"],
-          metadata: card.slice("oracle_text", "power", "toughness", "loyalty", "colors", "color_identity"),
+          metadata: card.slice("oracle_text", "power", "toughness", "loyalty", "colors", "color_identity", "flavor_text", "artist"),
           created_at: Time.current,
           updated_at: Time.current
         }
