@@ -113,6 +113,7 @@ end
         mana_cost: @bulk_card.mana_cost,
         type_line: @bulk_card.type_line,
         oracle_text: @bulk_card.metadata['oracle_text'],
+        flavor_text: @bulk_card.metadata['flavor_text'],
         image_url: @bulk_card.image_uri,
         power: @bulk_card.metadata['power'],
         toughness: @bulk_card.metadata['toughness'],

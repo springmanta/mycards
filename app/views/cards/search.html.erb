@@ -9,6 +9,7 @@
         <% @cards.each do |card| %>
           <%= link_to card_path(card), class: "block group" do %>
             <div class="relative overflow-hidden rounded-xl">
+              <% if card.image_uri.present? %>
               <%= image_tag card.image_uri,
                   alt: card.name,
                   class: "w-full h-auto rounded-xl shadow-lg group-hover:shadow-xl transition-shadow",
@@ -17,6 +18,7 @@
               <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
                 <span class="text-white text-md font-semibold">View Card</span>
               </div>
+              <% end %>
             </div>
 
             <p class="text-center mt-2 text-sm font-semibold truncate"><%= card.name %></p>
