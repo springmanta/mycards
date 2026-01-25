@@ -108,7 +108,7 @@
       <% if @card.metadata['flavor_text'].present? || @card.metadata['artist'].present? %>
         <div class="from-yellow-50 to-gray-100 bg-linear-to-r border-l-4 border-violet rounded-xl p-6">
           <p class="text-gray-500 text-sm leading-relaxed whitespace-pre-line"><i><%= @card.metadata['flavor_text'] %></i></p>
-            <% if @card.metadata['flavor_text'].present? && @card.metadata['artist'].present? %>
+            <% if @card.metadata['flavor_text'].present? || @card.metadata['artist'].present? %>
               <br>
             <% end %>
           <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-line"><strong>Ilustrated by </strong><i><%= @card.metadata['artist'] %></i></p>

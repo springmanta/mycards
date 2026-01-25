@@ -1,4 +1,6 @@
 module ApplicationHelper
+  include Pagy::Method
+
   def show_navbar_search?
     case controller_name
     when "home", "sessions", "registrations", "passwords"
