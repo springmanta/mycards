@@ -25,6 +25,8 @@ class SetsController < ApplicationController
     else
       @sets.order('magic_sets.name ASC') # Default A-Z
     end
+
+    @pagy, @sets = pagy(:offset, @sets, limit: 30)
   end
 
   def show

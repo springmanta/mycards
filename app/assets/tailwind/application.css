@@ -17,3 +17,29 @@
   --font-sans: Inter, system-ui, sans-serif;
   --font-display: Poppins, system-ui, sans-serif;
 }
+
+nav.pagy.series-nav a {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+  text-align: center;
+  margin-right: 5px;
+}
+
+nav.pagy.series-nav a:hover:not([aria-current="page"]) {
+  background-color: #635547;
+  color: white;
+  border-color: #635547;
+}
+
+nav.pagy.series-nav a[aria-current="page"] {
+  background-color: #635547;
+  color: white;
+  border-color: #635547;
+  cursor: default;
+}
+

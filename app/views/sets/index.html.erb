@@ -3,7 +3,9 @@
   <!-- Header -->
   <h1 class="text-4xl font-display font-bold mb-6">Magic: The Gathering Sets</h1>
 
-    <p class="text-gray-600 mb-6">Showing <%= @sets.count %> sets</p>
+    <p class="text-gray-600 mb-6">
+        Showing <%= @pagy.from %>-<%= @pagy.to %> of <%= @pagy.count %> sets
+    </p>
 
   <!-- Collapsible Filters -->
   <div class="mb-6" data-controller="toggle" data-toggle-open-value="<%= params[:q].present? || params[:letter].present? || params[:sort].present? && params[:sort] != 'name_asc' %>">
@@ -107,6 +109,19 @@
           <%= set.bulk_cards.count %> cards
         </p>
       <% end %>
+    <% end %>
+   <!-- app/views/sets/index.html.erb -->
+    <% if @pagy.pages > 1 %>
+      <div class="flex justify-center mt-8">
+        <%== @pagy.series_nav(classes: {
+          nav: 'flex gap-2 items-center',
+          prev: 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-umber hover:text-white transition-colors',
+          page: 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-umber hover:text-white transition-colors',
+          active: 'px-4 py-2 bg-umber text-white rounded-lg font-semibold',
+          gap: 'px-4 py-2 text-gray-400',
+          next: 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-umber hover:text-white transition-colors'
+        }) %>
+      </div>
     <% end %>
   </div>
 </div>
