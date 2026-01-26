@@ -154,63 +154,221 @@ namespace :scryfall do
     puts "Total cards in database: #{BulkCard.count}"
   end
 
-  desc "Update cards and prices - only add new cards and update existing prices"
-  task update_cards_and_prices: :environment do
+  desc "Memory-efficient update: cards and prices"
+  task efficient_update: :environment do
     require "net/http"
     require "json"
     require "openssl"
 
-    puts "🔄 Updating cards and prices..."
+    puts "🔄 Starting memory-efficient update..."
 
     # First update sets
-    Rake::Task["scryfall:update_sets"].invoke
-
-    # Then update cards
-    uri = URI("https://api.scryfall.com/bulk-data")
+    puts "Updating sets..."
+    uri = URI("https://api.scryfall.com/sets")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
+    response = http.request(Net::HTTP::Get.new(uri.request_uri))
+    sets_data = JSON.parse(response.body)
+
+    existing_codes = MagicSet.pluck(:code).to_set
+    new_sets = 0
+
+    sets_data["data"].each do |set|
+      next if set["digital"] != false
+      next if existing_codes.include?(set["code"])
+
+      MagicSet.create!(
+        code: set["code"],
+        name: set["name"],
+        icon_svg_uri: set["icon_svg_uri"],
+        released_at: set["released_at"]
+      )
+      new_sets += 1
+    end
+
+    puts "✅ Added #{new_sets} new sets"
+
+    # Get bulk data URL
+    puts "Getting bulk data URL..."
+    uri = URI("https://api.scryfall.com/bulk-data")
     response = http.request(Net::HTTP::Get.new(uri.request_uri))
     bulk_data = JSON.parse(response.body)
 
     default_cards = bulk_data["data"].find { |item| item["type"] == "default_cards" }
     download_uri = URI(default_cards["download_uri"])
 
-    puts "📥 Downloading bulk data..."
+    puts "📥 Streaming bulk data (memory efficient)..."
 
+    # Stream and process in small batches
     http2 = Net::HTTP.new(download_uri.host, download_uri.port)
     http2.use_ssl = true
     http2.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    http2.read_timeout = 300
+    http2.read_timeout = 600
 
-    json_data = http2.request(Net::HTTP::Get.new(download_uri.request_uri)).body
-    cards = JSON.parse(json_data)
+    # Get existing IDs in batches to avoid loading all at once
+    puts "Loading existing card IDs..."
+    existing_ids = Set.new
+    BulkCard.find_in_batches(batch_size: 5000) do |batch|
+      existing_ids.merge(batch.map(&:scryfall_id))
+      GC.start # Force garbage collection
+    end
 
-    puts "Processing #{cards.size} cards..."
-
-    existing_ids = BulkCard.pluck(:scryfall_id).to_set
     new_cards = 0
     updated_prices = 0
+    batch_records = []
+    batch_size = 500
 
-    cards.each_slice(1000) do |batch|
-      new_records = []
+    request2 = Net::HTTP::Get.new(download_uri.request_uri)
+    json_data = http2.request(request2).body
 
-      batch.each do |card|
-        next if card["digital"] == true
-        next unless card["games"]&.include?("paper")
+    # Parse JSON line by line if possible, or in chunks
+    cards = JSON.parse(json_data)
+    total = cards.size
 
-        if existing_ids.include?(card["id"])
-          # Update price for existing card
-          bulk_card = BulkCard.find_by(scryfall_id: card["id"])
-          new_price = card.dig("prices", "eur")&.to_f
+    cards.each_with_index do |card, index|
+      next if card["digital"] == true
+      next unless card["games"]&.include?("paper")
 
-          if bulk_card && new_price && bulk_card.eur_price != new_price
-            bulk_card.update(eur_price: new_price)
-            updated_prices += 1
-          end
-        else
-          # Add new card
+      if existing_ids.include?(card["id"])
+        # Update price for existing card
+        bulk_card = BulkCard.find_by(scryfall_id: card["id"])
+        new_price = card.dig("prices", "eur")&.to_f
+
+        if bulk_card && new_price && bulk_card.eur_price != new_price
+          bulk_card.update_column(:eur_price, new_price)
+          updated_prices += 1
+        end
+      else
+        # Prepare new card for batch insert
+        batch_records << {
+          scryfall_id: card["id"],
+          name: card["name"],
+          set_code: card["set"],
+          collector_number: card["collector_number"],
+          eur_price: card.dig("prices", "eur")&.to_f,
+          image_uri: card.dig("image_uris", "normal") || card.dig("card_faces", 0, "image_uris", "normal"),
+          rarity: card["rarity"],
+          type_line: card["type_line"],
+          mana_cost: card["mana_cost"],
+          metadata: card.slice("oracle_text", "power", "toughness", "loyalty", "colors", "color_identity", "flavor_text", "artist"),
+          created_at: Time.current,
+          updated_at: Time.current
+        }
+        new_cards += 1
+      end
+
+      # Insert batch and clear memory
+      if batch_records.size >= batch_size
+        BulkCard.insert_all(batch_records, unique_by: :scryfall_id)
+        batch_records.clear
+        GC.start
+        print "\rProcessed: #{index + 1}/#{total} | New: #{new_cards} | Updated: #{updated_prices}"
+      end
+    end
+
+    # Insert remaining records
+    BulkCard.insert_all(batch_records, unique_by: :scryfall_id) if batch_records.any?
+
+    puts "\n✅ Update complete!"
+    puts "New cards: #{new_cards}"
+    puts "Updated prices: #{updated_prices}"
+  end
+
+   desc "Smart update - only fetch cards from new or incomplete sets"
+  task smart_update: :environment do
+    require "net/http"
+    require "json"
+    require "openssl"
+
+    puts "🔄 Smart update - checking for incomplete sets..."
+
+    # Get all sets from Scryfall
+    uri = URI("https://api.scryfall.com/sets")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+    response = http.request(Net::HTTP::Get.new(uri.request_uri))
+    scryfall_sets = JSON.parse(response.body)["data"]
+
+    # Find new sets
+    existing_codes = MagicSet.pluck(:code).to_set
+    new_sets = scryfall_sets.reject { |s| s["digital"] || existing_codes.include?(s["code"]) }
+
+    new_sets.each do |set|
+      MagicSet.create!(
+        code: set["code"],
+        name: set["name"],
+        icon_svg_uri: set["icon_svg_uri"],
+        released_at: set["released_at"]
+      )
+    end
+
+    puts "✅ Added #{new_sets.size} new sets"
+
+    # Find incomplete sets (released in last 90 days or missing cards)
+    recent_date = 90.days.ago
+    incomplete_sets = []
+
+    MagicSet.where("released_at > ?", recent_date).or(MagicSet.where(released_at: nil)).each do |local_set|
+      scryfall_set = scryfall_sets.find { |s| s["code"] == local_set.code }
+      next unless scryfall_set
+
+      expected = scryfall_set["card_count"]
+      actual = local_set.bulk_cards.count
+
+      if actual < expected
+        incomplete_sets << {
+          set: local_set,
+          code: local_set.code,
+          expected: expected,
+          actual: actual
+        }
+      end
+    end
+
+    if incomplete_sets.empty?
+      puts "✅ All recent sets are complete!"
+      return
+    end
+
+    puts "\nFound #{incomplete_sets.size} incomplete sets:"
+    incomplete_sets.each do |info|
+      puts "  #{info[:set].name} (#{info[:code]}): #{info[:actual]}/#{info[:expected]} cards"
+    end
+
+    # Fetch cards for each incomplete set using Scryfall API
+    total_added = 0
+    incomplete_sets.each do |info|
+      puts "\n📥 Fetching cards for #{info[:set].name}..."
+
+      set_code = info[:code]
+      page = 1
+      has_more = true
+      added = 0
+
+      while has_more
+        search_uri = URI("https://api.scryfall.com/cards/search?q=set:#{set_code}+game:paper+-is:digital&page=#{page}")
+
+        sleep(0.1) # Respect Scryfall's rate limit
+
+        search_response = http.request(Net::HTTP::Get.new(search_uri.request_uri))
+
+        if search_response.code != "200"
+          puts "  ⚠️  Error fetching page #{page}: #{search_response.code}"
+          break
+        end
+
+        search_data = JSON.parse(search_response.body)
+        cards = search_data["data"]
+
+        # Process cards in batch
+        new_records = []
+        cards.each do |card|
+          next if BulkCard.exists?(scryfall_id: card["id"])
+
           new_records << {
             scryfall_id: card["id"],
             name: card["name"],
@@ -225,19 +383,25 @@ namespace :scryfall do
             created_at: Time.current,
             updated_at: Time.current
           }
-          new_cards += 1
         end
+
+        if new_records.any?
+          BulkCard.insert_all(new_records, unique_by: :scryfall_id)
+          added += new_records.size
+          total_added += new_records.size
+        end
+
+        print "\r  Added #{added} cards..."
+
+        has_more = search_data["has_more"]
+        page += 1
       end
 
-      BulkCard.insert_all(new_records, unique_by: :scryfall_id) if new_records.any?
-
-      print "\rNew cards: #{new_cards} | Updated prices: #{updated_prices}"
+      puts " ✅"
     end
 
-    puts "\n✅ Update complete!"
-    puts "New cards added: #{new_cards}"
-    puts "Prices updated: #{updated_prices}"
-    puts "Total cards: #{BulkCard.count}"
+    puts "\n✅ Smart update complete!"
+    puts "Total new cards added: #{total_added}"
   end
 
   desc "Complete incomplete sets - add missing cards from partially imported sets"
