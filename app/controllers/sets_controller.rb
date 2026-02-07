@@ -16,14 +16,14 @@ class SetsController < ApplicationController
 
     # Sorting - always apply, regardless of filters
     @sets = case params[:sort]
-    when 'name_desc'
-      @sets.order(name: :desc)
-    when 'released_asc'
-      @sets.order(Arel.sql('released_at ASC NULLS LAST, name ASC'))
-    when 'released_desc'
-      @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
-    else
-      @sets.order('magic_sets.name ASC') # Default A-Z
+      when 'name_desc'
+        @sets.order(name: :desc)
+      when 'released_asc'
+        @sets.order(Arel.sql('released_at ASC NULLS LAST, name ASC'))
+      when 'released_desc'
+        @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
+      else
+        @sets.order('magic_sets.name ASC') # Default A-Z
     end
 
     @pagy, @sets = pagy(:offset, @sets, limit: 30)

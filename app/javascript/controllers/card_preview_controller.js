@@ -1,35 +1,49 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["image"]
+  static targets = ["image", "price", "scryfallId", "cardId"]
   static values = {
     printings: Array
   }
 
   connect() {
     console.log("Card preview connected")
-    console.log("Printings data:", this.printingsValue)
   }
 
   updateImage(event) {
     const selectedId = event.target.value
-    console.log("Selected ID:", selectedId)
-    console.log("Looking in printings:", this.printingsValue)
-
-    const selectedPrinting = this.printingsValue.find(p => p.id === selectedId)
-    console.log("Found printing:", selectedPrinting)
+    const selectedPrinting = this.printingsValue.find(p =>
+      String(p.id) === selectedId
+    )
 
     if (selectedPrinting) {
       const imageUrl = selectedPrinting.image_uris?.normal ||
-                      selectedPrinting.card_faces?.[0]?.image_uris?.normal
-
-      console.log("Image URL:", imageUrl)
+                       selectedPrinting.card_faces?.[0]?.image_uris?.normal ||
+                       selectedPrinting.image_uri
 
       if (imageUrl && this.hasImageTarget) {
         this.imageTarget.src = imageUrl
-        console.log("Image updated!")
-      } else {
-        console.log("No image URL found or no image target")
+      }
+
+      if (this.hasScryfallIdTarget) {
+        this.scryfallIdTarget.value = selectedId
+      }
+
+      if (this.hasCardIdTarget) {
+        this.cardIdTarget.value = selectedId
+      }
+
+      if (this.hasPriceTarget) {
+        const price = selectedPrinting.prices?.eur || selectedPrinting.eur_price
+        const container = this.priceTarget.closest('[data-price-container]')
+
+        if (price) {
+          this.priceTarget.textContent = `€${parseFloat(price).toFixed(2)}`
+          if (container) container.classList.remove('hidden')
+        } else {
+          this.priceTarget.textContent = ''
+          if (container) container.classList.add('hidden')
+        }
       }
     }
   }

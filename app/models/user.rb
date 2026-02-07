@@ -7,4 +7,8 @@ class User < ApplicationRecord
   validates :password, length: { minimum: 8 }, allow_blank: true
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
+
+  def ensure_collection
+    collections.first || collections.create!(name: "My Collection")
+  end
 end

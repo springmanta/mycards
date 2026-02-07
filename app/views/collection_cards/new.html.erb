@@ -1,81 +1,179 @@
-<div class="max-w-2xl mx-auto px-4 py-8"
-     data-controller="card-preview"
-     data-card-preview-printings-value="<%= @all_printings.to_json %>">
+<%# app/views/collection_cards/new.html.erb %>
 
-  <!-- Header -->
+<div class="max-w-6xl mx-auto mt-8 px-7 py-8">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold mb-4">Add Card to Collection</h1>
-    <%= link_to "Results", search_cards_path(q: @card_data["name"]), class: "bg-yellow-600 text-white text-sm px-5 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors" %>
+    <%= link_to "← Back to Results", search_cards_path(q: @card_data["name"]),
+        class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
   </div>
 
-  <!-- Card Preview -->
-  <div class="bg-gray-50 shadow-xl rounded-lg p-6 mb-6">
-    <div class="flex gap-4">
-      <% if @card_data["image_uris"] %>
-        <%= image_tag @card_data["image_uris"]["normal"],
+  <div class="grid lg:grid-cols-3 gap-8"
+       data-controller="card-preview"
+       data-card-preview-printings-value="<%= @all_printings.to_json %>">
+
+    <!-- Left: Card Image + Version Switcher -->
+    <div class="lg:col-span-1 space-y-4">
+      <% image_url = @card_data.dig("image_uris", "normal") || @card_data.dig("card_faces", 0, "image_uris", "normal") %>
+      <% if image_url %>
+        <%= image_tag image_url,
             alt: @card_data["name"],
-            class: "w-48 rounded-xl shadow-xl",
+            class: "w-full rounded-xl shadow-xl",
             data: { card_preview_target: "image" } %>
+      <% else %>
+        <div class="w-full aspect-[5/7] bg-gray-200 rounded-xl shadow-xl flex items-center justify-center">
+          <div class="text-center p-4">
+            <p class="text-gray-500 text-lg font-semibold"><%= @card_data["name"] %></p>
+            <p class="text-gray-400 text-sm mt-2">No image available</p>
+          </div>
+        </div>
       <% end %>
 
+      <% if @all_printings.size > 1 %>
+        <div class="bg-white border-2 border-gray-200 rounded-xl p-4">
+          <p class="text-sm font-semibold text-gray-600 mb-2">Version / Printing</p>
+          <select id="printing-select"
+                  data-action="change->card-preview#updateImage"
+                  class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none">
+            <% @all_printings.each do |printing| %>
+              <option value="<%= printing['id'] %>"
+                      <%= 'selected' if printing['id'] == @card_data['id'] %>>
+                <%= printing['set_name'] %> (<%= printing['set'].upcase %>) — <%= printing['rarity'].capitalize %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Right: Card Details + Add Form -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Title and Set Info -->
       <div>
-        <h2 class="text-2xl font-bold mb-2"><%= @card_data["name"] %></h2>
-        <p class="text-gray-600 mb-1"><%= @card_data["set_name"] %> (<%= @card_data["set"].upcase %>)</p>
-        <p class="text-gray-600 mb-1"><%= @card_data["rarity"].capitalize %></p>
-        <p class="text-sm text-gray-500 mt-4"><%= @card_data["type_line"] %></p>
+        <h1 class="text-4xl font-bold mb-3"><%= @card_data["name"] %></h1>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
+            <%= @card_data["set_name"] %>
+          </span>
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
+            <%= @card_data["set"].upcase %>
+          </span>
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold capitalize">
+            <%= @card_data["rarity"] %>
+          </span>
+        </div>
+      </div>
+
+      <!-- Card Type and Stats -->
+      <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Type</p>
+            <p class="font-semibold"><%= @card_data["type_line"] %></p>
+          </div>
+          <% if @card_data["mana_cost"].present? %>
+            <div>
+              <p class="text-sm text-gray-600 mb-1">Mana Cost</p>
+              <p class="font-mono font-semibold"><%= @card_data["mana_cost"] %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <% if @card_data["power"].present? && @card_data["toughness"].present? %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-1">Power / Toughness</p>
+            <p class="font-bold text-2xl"><%= @card_data["power"] %> / <%= @card_data["toughness"] %></p>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Oracle Text -->
+      <% if @card_data["oracle_text"].present? %>
+        <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
+          <h3 class="text-sm font-semibold text-gray-600 mb-3">Oracle Text</h3>
+          <p class="text-gray-800 leading-relaxed whitespace-pre-line"><%= @card_data["oracle_text"] %></p>
+        </div>
+      <% end %>
+
+      <!-- Flavor Text & Artist -->
+      <% if @card_data["flavor_text"].present? || @card_data["artist"].present? %>
+        <div class="from-yellow-50 to-gray-100 bg-gradient-to-r border-l-4 border-goldenrod rounded-xl p-6">
+          <% if @card_data["flavor_text"].present? %>
+            <p class="text-gray-500 text-sm leading-relaxed whitespace-pre-line italic"><%= @card_data["flavor_text"] %></p>
+          <% end %>
+          <% if @card_data["artist"].present? %>
+            <p class="text-gray-600 text-sm mt-2"><strong>Illustrated by</strong> <em><%= @card_data["artist"] %></em></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Market Price -->
+      <% eur_price = @card_data.dig("prices", "eur") %>
+      <div data-price-container
+           class="<%= 'hidden' unless eur_price.present? %> bg-green-50 border-l-4 border-green-400 rounded-lg p-6">
+        <p class="text-sm text-gray-600">Market Price (EUR)</p>
+        <p class="text-2xl font-bold text-green-600" data-card-preview-target="price">
+          <% if eur_price.present? %>
+            €<%= format('%.2f', eur_price.to_f) %>
+          <% end %>
+        </p>
+      </div>
+
+      <!-- Add to Collection Form -->
+      <div class="bg-white border-2 border-umber rounded-xl p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Add to Collection</h3>
+
+        <%= form_with model: @collection_card, class: "space-y-4" do |f| %>
+          <% if @collection_card.errors.any? %>
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+              <% @collection_card.errors.full_messages.each do |msg| %>
+                <p class="text-sm text-red-600"><%= msg %></p>
+              <% end %>
+            </div>
+          <% end %>
+
+          <!-- Hidden field synced with the version selector -->
+          <%= hidden_field_tag :scryfall_id, @card_data['id'], data: { card_preview_target: "scryfallId" } %>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Collection -->
+            <div>
+              <%= f.label :collection_id, "Collection", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :collection_id,
+                  @collections.map { |c| [c.name, c.id] },
+                  { selected: @collections.first&.id },
+                  { class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" } %>
+            </div>
+
+            <!-- Quantity -->
+            <div>
+              <%= f.label :quantity, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.number_field :quantity, min: 1, class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" %>
+            </div>
+
+            <!-- Condition -->
+            <div>
+              <%= f.label :condition, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :condition,
+                  [
+                    ['Near Mint', 'near_mint'],
+                    ['Lightly Played', 'lightly_played'],
+                    ['Moderately Played', 'moderately_played'],
+                    ['Heavily Played', 'heavily_played'],
+                    ['Damaged', 'damaged']
+                  ],
+                  {},
+                  { class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" } %>
+            </div>
+
+            <!-- Foil -->
+            <div class="flex items-center gap-3 pt-7">
+              <%= f.check_box :foil, class: "w-5 h-5 rounded border-gray-300 text-umber focus:ring-umber cursor-pointer" %>
+              <%= f.label :foil, "Foil", class: "text-sm font-semibold text-gray-700 cursor-pointer" %>
+            </div>
+          </div>
+
+          <%= f.submit "Add to Collection", class: "w-full bg-umber hover:bg-golden-brown text-white py-2.5 rounded-xl font-semibold transition-colors cursor-pointer" %>
+        <% end %>
       </div>
     </div>
   </div>
-
-  <!-- Add to Collection Form -->
-  <%= form_with model: @collection_card, class: "bg-gray-50 shadow-lg rounded-lg p-6" do |f| %>
-    <% if @collection_card.errors.any? %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-        <ul>
-          <% @collection_card.errors.full_messages.each do |message| %>
-            <li><%= message %></li>
-          <% end %>
-        </ul>
-      </div>
-    <% end %>
-
-    <!-- Set/Printing Selector -->
-    <div class="mb-4">
-      <%= label_tag :scryfall_id, "Choose Set/Printing", class: "block text-sm font-semibold mb-2" %>
-      <%= select_tag :scryfall_id,
-          options_for_select(@all_printings.map { |p| ["#{p['set_name']} (#{p['set'].upcase})", p['id']] }, @card_data['id']),
-          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base",
-          data: { action: "change->card-preview#updateImage" } %>
-    </div>
-
-    <div class="mb-4">
-      <%= f.label :collection_id, "Collection", class: "block text-sm font-semibold mb-2" %>
-      <%= f.select :collection_id,
-          options_from_collection_for_select(@collections, :id, :name, @collections.first&.id),
-          {},
-          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
-    </div>
-
-    <div class="mb-4">
-      <%= f.label :quantity, class: "block text-sm font-semibold mb-2" %>
-      <%= f.number_field :quantity, min: 1, value: 1, class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
-    </div>
-
-    <div class="mb-4">
-      <%= f.label :condition, class: "block text-sm font-semibold mb-2" %>
-      <%= f.select :condition,
-          CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
-          {},
-          class: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 text-base" %>
-    </div>
-
-    <div class="mb-4">
-      <label class="flex items-center">
-        <%= f.check_box :foil, class: "mr-2" %>
-        <span class="text-sm font-semibold">Foil</span>
-      </label>
-    </div>
-
-    <%= f.submit "Add to Collection", class: "w-full bg-yellow-600 text-white py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
-  <% end %>
 </div>

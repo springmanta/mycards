@@ -8,6 +8,9 @@ class CardsController < ApplicationController
   def show
     @card = BulkCard.find(params[:id])
     @collections = current_user&.collections || []
+    @all_printings = BulkCard.where(name: @card.name)
+                            .includes(:magic_set)
+                            .order(:set_code)
   end
 
   def autocomplete

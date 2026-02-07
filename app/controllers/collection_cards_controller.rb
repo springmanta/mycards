@@ -1,46 +1,46 @@
 class CollectionCardsController < ApplicationController
-  before_action :set_card, only: [:new], if: -> { params[:scryfall_id].present? }
+  before_action :set_card, only: [:new, :edit], if: -> { params[:scryfall_id].present? }
   before_action :set_collection_card, only: [:show, :edit, :update, :destroy]
 
   def index
-  @collections = Current.user.collections.includes(collection_cards: :card)
-  @collection_cards = @collections.flat_map(&:collection_cards)
-  @collection = @collections.first
-  @view_mode = params[:view] || 'list'
+    @collections = Current.user.collections.includes(collection_cards: :card)
+    @collection_cards = @collections.flat_map(&:collection_cards)
+    @collection = @collections.first
+    @view_mode = params[:view] || 'list'
 
-  # Search by card name
-  if params[:q].present?
-    @collection_cards = @collection_cards.select { |cc| cc.card.name.downcase.include?(params[:q].downcase) }
-  end
+    # Search by card name
+    if params[:q].present?
+      @collection_cards = @collection_cards.select { |cc| cc.card.name.downcase.include?(params[:q].downcase) }
+    end
 
-  # Filter by rarity
-  if params[:rarity].present?
-    @collection_cards = @collection_cards.select { |cc| cc.card.rarity == params[:rarity] }
-  end
+    # Filter by rarity
+    if params[:rarity].present?
+      @collection_cards = @collection_cards.select { |cc| cc.card.rarity == params[:rarity] }
+    end
 
-  # Filter by type
-  if params[:type].present?
-    @collection_cards = @collection_cards.select { |cc| cc.card.type_line&.include?(params[:type]) }
-  end
+    # Filter by type
+    if params[:type].present?
+      @collection_cards = @collection_cards.select { |cc| cc.card.type_line&.include?(params[:type]) }
+    end
 
-  # Sorting
-  @collection_cards = case params[:sort]
-  when 'name_asc'
-    @collection_cards.sort_by { |cc| cc.card.name }
-  when 'name_desc'
-    @collection_cards.sort_by { |cc| cc.card.name }.reverse
-  when 'set_asc'
-    @collection_cards.sort_by { |cc| cc.card.set_name || '' }
-  when 'set_desc'
-    @collection_cards.sort_by { |cc| cc.card.set_name || '' }.reverse
-  when 'price_asc'
-    @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }
-  when 'price_desc'
-    @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }.reverse
-  else
-    @collection_cards.sort_by(&:created_at).reverse # Most recent first by default
+    # Sorting
+    @collection_cards = case params[:sort]
+      when 'name_asc'
+        @collection_cards.sort_by { |cc| cc.card.name }
+      when 'name_desc'
+        @collection_cards.sort_by { |cc| cc.card.name }.reverse
+      when 'set_asc'
+        @collection_cards.sort_by { |cc| cc.card.set_name || '' }
+      when 'set_desc'
+        @collection_cards.sort_by { |cc| cc.card.set_name || '' }.reverse
+      when 'price_asc'
+        @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }
+      when 'price_desc'
+        @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }.reverse
+      else
+        @collection_cards.sort_by(&:created_at).reverse # Most recent first by default
+      end
   end
-end
 
   def show
     @collection_card = CollectionCard.includes(:card, :collection).find(params[:id])
@@ -58,7 +58,7 @@ end
     })
 
     if response.status == 200
-      @all_printings = JSON.parse(response.body)["data"]
+      @all_printings = JSON.parse(response.body)["data"].reject { |p| p["digital"] }
     else
       @all_printings = [@card_data]
     end
@@ -79,6 +79,19 @@ end
 
   def edit
     @collections = Current.user.collections
+
+    card_name = @collection_card.card.name
+    response = CardSearch.conn.get("/cards/search", {
+      q: "!\"#{card_name}\"",
+      unique: "prints",
+      order: "released"
+    })
+
+    if response.status == 200
+      @all_printings = JSON.parse(response.body)["data"].reject { |p| p["digital"] }
+    else
+      @all_printings = []
+    end
   end
 
   def update
@@ -122,8 +135,13 @@ end
       @card.save!
     end
 
+    @card.cardmarket_price = @bulk_card.eur_price
+    @card.prices_updated_at = Time.current
+    @card.save!
+
     @collection_card = CollectionCard.new(collection_card_params.except(:bulk_card_id))
     @collection_card.card = @card
+    @collection_card.collection ||= Current.user.ensure_collection
 
     if @collection_card.save
       redirect_to collection_cards_path, notice: "#{@card.name} added to your collection."
@@ -165,6 +183,7 @@ end
 
     @collection_card = CollectionCard.new(collection_card_params)
     @collection_card.card = @card
+    @collection_card.collection ||= Current.user.ensure_collection
 
     if @collection_card.save
       redirect_to collection_cards_path, notice: "#{@card.name} added to your collection."
