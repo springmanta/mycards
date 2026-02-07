@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   root to: "home#index"
+  resources :collections, only: [:index, :show, :new, :create, :edit, :update, :destroy]
   resources :collection_cards, only: [:index, :show, :new, :create, :edit, :update, :destroy]
   resources :sets, param: :code, only: [:index, :show] do
     collection do

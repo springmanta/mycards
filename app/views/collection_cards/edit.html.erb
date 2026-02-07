@@ -1,60 +1,180 @@
-<div class="max-w-2xl mx-auto mt-8 px-4 py-8">
-  <!-- Card Preview -->
-  <div class="mb-8 text-center">
-    <%= image_tag @collection_card.card.image_url,
-        alt: @collection_card.card.name,
-        class: "w-64 h-auto mx-auto rounded-xl shadow-lg" %>
-    <h2 class="text-xl font-bold mt-4"><%= @collection_card.card.name %></h2>
-    <p class="text-gray-600"><%= @collection_card.card.set_name %></p>
+<%# app/views/collection_cards/edit.html.erb %>
+
+<div class="max-w-6xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-6">
+    <%= link_to "← Back to #{@collection_card.collection.name}", collection_path(@collection_card.collection),
+        class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
   </div>
 
-  <%= form_with model: @collection_card, url: collection_card_path(@collection_card), method: :patch, class: "space-y-6" do |f| %>
+  <div class="grid lg:grid-cols-3 gap-8"
+       data-controller="card-preview"
+       data-card-preview-printings-value="<%= @all_printings.to_json %>">
 
-    <%= f.hidden_field :collection_id, value: @collections.first.id %>
+    <!-- Left: Card Image + Version Switcher -->
+    <div class="lg:col-span-1 space-y-4">
+      <% if @collection_card.card.image_url.present? %>
+        <%= image_tag @collection_card.card.image_url,
+            alt: @collection_card.card.name,
+            class: "w-full rounded-xl shadow-xl",
+            data: { card_preview_target: "image" } %>
+      <% else %>
+        <div class="w-full aspect-[5/7] bg-gray-200 rounded-xl shadow-xl flex items-center justify-center">
+          <div class="text-center p-4">
+            <p class="text-gray-500 text-lg font-semibold"><%= @collection_card.card.name %></p>
+            <p class="text-gray-400 text-sm mt-2">No image available</p>
+          </div>
+        </div>
+      <% end %>
 
-    <!-- Quantity -->
-    <div>
-      <%= f.label :quantity, "Quantity", class: "block text-sm font-semibold mb-2" %>
-      <%= f.number_field :quantity,
-          min: 1,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
+      <% if @all_printings && @all_printings.size > 1 %>
+        <div class="bg-white border-2 border-gray-200 rounded-xl p-4">
+          <p class="text-sm font-semibold text-gray-600 mb-2">Version / Printing</p>
+          <select data-action="change->card-preview#updateImage"
+                  class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none">
+            <% @all_printings.each do |printing| %>
+              <option value="<%= printing['id'] %>"
+                      <%= 'selected' if printing['id'] == @collection_card.card.scryfall_id %>>
+                <%= printing['set_name'] %> (<%= printing['set'].upcase %>) — <%= printing['rarity'].capitalize %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+      <% end %>
     </div>
 
-    <!-- Condition -->
-    <div>
-      <%= f.label :condition, "Condition", class: "block text-sm font-semibold mb-2" %>
-      <%= f.select :condition,
-          CollectionCard::CONDITIONS.map { |c| [c.titleize, c] },
-          {},
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
-    </div>
+    <!-- Right: Card Details + Edit Form -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Title and Set Info -->
+      <div>
+        <h1 class="text-4xl font-bold mb-3"><%= @collection_card.card.name %></h1>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
+            <%= link_to @collection_card.card.set_name, set_path(@collection_card.card.set_code), class: "hover:text-umber" %>
+          </span>
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
+            <%= @collection_card.card.set_code.upcase %>
+          </span>
+          <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold capitalize">
+            <%= @collection_card.card.rarity %>
+          </span>
+        </div>
+      </div>
 
-    <!-- Foil -->
-    <div class="flex items-center">
-      <%= f.check_box :foil, class: "w-5 h-5 text-yellow-800 border-gray-300 rounded focus:ring-yellow-600" %>
-      <%= f.label :foil, "Foil", class: "ml-2 text-sm font-semibold" %>
-    </div>
+      <!-- Card Type and Stats -->
+      <div class="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <p class="text-sm text-gray-600 mb-1">Type</p>
+            <p class="font-semibold"><%= @collection_card.card.type_line %></p>
+          </div>
+          <% if @collection_card.card.mana_cost.present? %>
+            <div>
+              <p class="text-sm text-gray-600 mb-1">Mana Cost</p>
+              <p class="font-mono font-semibold"><%= @collection_card.card.mana_cost %></p>
+            </div>
+          <% end %>
+        </div>
 
-    <!-- Price Paid (optional) -->
-    <div>
-      <%= f.label :price_paid, "Price Paid (optional)", class: "block text-sm font-semibold mb-2" %>
-      <%= f.number_field :price_paid,
-          step: 0.01,
-          placeholder: "0.00",
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
-    </div>
+        <% if @collection_card.card.power.present? && @collection_card.card.toughness.present? %>
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <p class="text-sm text-gray-600 mb-1">Power / Toughness</p>
+            <p class="font-bold text-2xl"><%= @collection_card.card.power %> / <%= @collection_card.card.toughness %></p>
+          </div>
+        <% end %>
+      </div>
 
-    <!-- Acquired Date (optional) -->
-    <div>
-      <%= f.label :acquired_at, "Date Acquired (optional)", class: "block text-sm font-semibold mb-2" %>
-      <%= f.date_field :acquired_at,
-          class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-600 focus:border-transparent" %>
-    </div>
+      <!-- Oracle Text -->
+      <% if @collection_card.card.oracle_text.present? %>
+        <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
+          <h3 class="text-sm font-semibold text-gray-600 mb-3">Oracle Text</h3>
+          <p class="text-gray-800 leading-relaxed whitespace-pre-line"><%= @collection_card.card.oracle_text %></p>
+        </div>
+      <% end %>
 
-    <!-- Submit Buttons -->
-    <div class="flex gap-4">
-      <%= f.submit "Update Card", class: "flex-1 bg-yellow-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-700 transition-colors cursor-pointer" %>
-      <%= link_to "Cancel", collection_cards_path, class: "flex-1 bg-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-400 transition-colors text-center" %>
+      <!-- Flavor Text & Artist -->
+      <% if @collection_card.card.flavor_text.present? || @collection_card.card.artist.present? %>
+        <div class="from-yellow-50 to-gray-100 bg-gradient-to-r border-l-4 border-goldenrod rounded-xl p-6">
+          <% if @collection_card.card.flavor_text.present? %>
+            <p class="text-gray-500 text-sm leading-relaxed whitespace-pre-line italic"><%= @collection_card.card.flavor_text %></p>
+          <% end %>
+          <% if @collection_card.card.artist.present? %>
+            <p class="text-gray-600 text-sm mt-2"><strong>Illustrated by</strong> <em><%= @collection_card.card.artist %></em></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <!-- Market Price -->
+      <div data-price-container
+           class="<%= 'hidden' unless @collection_card.card.cardmarket_price.present? %> bg-green-50 border-l-4 border-green-400 rounded-lg p-6">
+        <p class="text-sm text-gray-600">Market Price (EUR)</p>
+        <p class="text-2xl font-bold text-green-600" data-card-preview-target="price">
+          <% if @collection_card.card.cardmarket_price.present? %>
+            €<%= number_with_precision(@collection_card.card.cardmarket_price, precision: 2) %>
+          <% end %>
+        </p>
+        <% if @collection_card.card.prices_updated_at.present? %>
+          <p class="text-xs text-gray-400 mt-1">Updated <%= time_ago_in_words(@collection_card.card.prices_updated_at) %> ago</p>
+        <% end %>
+      </div>
+
+      <!-- Edit Form -->
+      <div class="bg-white border-2 border-umber rounded-xl p-6">
+        <h3 class="text-lg font-bold text-gray-900 mb-4">Collection Details</h3>
+
+        <%= form_with(model: @collection_card, class: "space-y-4") do |f| %>
+          <% if @collection_card.errors.any? %>
+            <div class="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+              <% @collection_card.errors.full_messages.each do |msg| %>
+                <p class="text-sm text-red-600"><%= msg %></p>
+              <% end %>
+            </div>
+          <% end %>
+
+          <div class="grid md:grid-cols-2 gap-4">
+            <!-- Collection -->
+            <div>
+              <%= f.label :collection_id, "Collection", class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :collection_id,
+                  @collections.map { |c| [c.name, c.id] },
+                  {},
+                  { class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" } %>
+            </div>
+
+            <!-- Quantity -->
+            <div>
+              <%= f.label :quantity, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.number_field :quantity, min: 1, class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" %>
+            </div>
+
+            <!-- Condition -->
+            <div>
+              <%= f.label :condition, class: "block text-sm font-semibold text-gray-700 mb-1" %>
+              <%= f.select :condition,
+                  [
+                    ['Near Mint', 'near_mint'],
+                    ['Lightly Played', 'lightly_played'],
+                    ['Moderately Played', 'moderately_played'],
+                    ['Heavily Played', 'heavily_played'],
+                    ['Damaged', 'damaged']
+                  ],
+                  {},
+                  { class: "w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:border-umber focus:outline-none" } %>
+            </div>
+
+            <!-- Foil -->
+            <div class="flex items-center gap-3 pt-7">
+              <%= f.check_box :foil, class: "w-5 h-5 rounded border-gray-300 text-umber focus:ring-umber cursor-pointer" %>
+              <%= f.label :foil, "Foil", class: "text-sm font-semibold text-gray-700 cursor-pointer" %>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+            <%= f.submit "Save Changes", class: "bg-umber hover:bg-golden-brown text-white font-semibold px-6 py-2.5 rounded-xl transition-colors cursor-pointer" %>
+            <%= link_to "Cancel", collection_path(@collection_card.collection),
+                class: "text-sm font-semibold text-gray-400 hover:text-umber transition-colors" %>
+          </div>
+        <% end %>
+      </div>
     </div>
-  <% end %>
+  </div>
 </div>

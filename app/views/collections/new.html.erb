@@ -1,0 +1,11 @@
+<div class="max-w-xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-8">
+    <%= link_to "My Collections", collections_path,
+        class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
+    <h1 class="text-4xl font-bold mt-4">New Collection</h1>
+  </div>
+
+  <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
+    <%= render "form" %>
+  </div>
+</div>
