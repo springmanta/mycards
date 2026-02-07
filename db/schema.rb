@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_02_06_192902) do
+ActiveRecord::Schema[8.0].define(version: 2026_02_07_173610) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_06_192902) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "set_name"
+    t.string "back_image_uri"
     t.index "lower((name)::text)", name: "index_bulk_cards_on_lower_name"
     t.index ["name"], name: "index_bulk_cards_on_name"
     t.index ["scryfall_id"], name: "index_bulk_cards_on_scryfall_id", unique: true
@@ -90,6 +91,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_06_192902) do
     t.decimal "tcgplayer_price", precision: 8, scale: 2
     t.decimal "cardmarket_price", precision: 8, scale: 2
     t.datetime "prices_updated_at"
+    t.string "back_image_url"
     t.index ["scryfall_id"], name: "index_cards_on_scryfall_id", unique: true
   end
 

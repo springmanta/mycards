@@ -130,7 +130,8 @@ class CollectionCardsController < ApplicationController
         image_url: @bulk_card.image_uri,
         power: @bulk_card.metadata['power'],
         toughness: @bulk_card.metadata['toughness'],
-        cardmarket_price: @bulk_card.eur_price
+        cardmarket_price: @bulk_card.eur_price,
+        back_image_url: @bulk_card.back_image_uri,
       )
       @card.save!
     end

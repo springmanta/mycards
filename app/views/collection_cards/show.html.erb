@@ -1,11 +1,23 @@
-<div data-controller="confirm" class="max-w-6xl mx-auto mt-8 px-7 py-8">
+<div data-controller="confirm card-flip"
+     data-card-flip-front-value="<%= @collection_card.card.image_url %>"
+     data-card-flip-back-value="<%= @collection_card.card.back_image_url %>"
+     class="max-w-6xl mx-auto mt-8 px-7 py-8">
   <div class="grid lg:grid-cols-3 gap-8">
     <!-- Card Image -->
     <div class="lg:col-span-1">
       <% if @collection_card.card.image_url %>
         <%= image_tag @collection_card.card.image_url,
             alt: @collection_card.card.name,
-            class: "w-full rounded-3xl shadow-xl sticky top-8" %>
+            class: "w-full rounded-3xl shadow-xl sticky top-8",
+            data: { card_flip_target: "image" } %>
+      <% end %>
+
+      <% if @collection_card.card.back_image_url.present? %>
+        <button data-card-flip-target="button"
+                data-action="click->card-flip#flip"
+                class="w-full mt-3 py-2 bg-umber hover:bg-golden-brown text-white text-sm font-semibold rounded-xl transition-colors cursor-pointer">
+          Show Back
+        </button>
       <% end %>
     </div>
 
@@ -59,12 +71,11 @@
       <% end %>
 
       <!-- Flavor Text + Artist -->
-
       <% if @collection_card.card.flavor_text.present? %>
         <div class="bg-amber-50 border-l-4 border-amber-400 rounded-lg p-6">
           <p class="italic text-gray-700 leading-relaxed"><%= @collection_card.card.flavor_text %></p>
           <% if @collection_card.card.artist.present? %>
-          <p class="text-xs text-gray-600 mt-1">Illustrated by <span class="font-semibold"><%= @collection_card.card.artist %></span></p>
+            <p class="text-xs text-gray-600 mt-1">Illustrated by <span class="font-semibold"><%= @collection_card.card.artist %></span></p>
           <% end %>
         </div>
       <% elsif @collection_card.card.artist.present? %>
@@ -85,14 +96,12 @@
             <dt class="text-sm text-gray-600">Quantity</dt>
             <dd class="font-semibold"><%= @collection_card.quantity %>x</dd>
           </div>
-
           <% if @collection_card.card.cardmarket_price %>
             <div>
               <dt class="text-sm text-gray-600">Market Price (Cardmarket)</dt>
               <dd class="font-semibold text-green-600">€<%= number_with_precision(@collection_card.card.cardmarket_price, precision: 2) %></dd>
             </div>
           <% end %>
-
           <div>
             <dt class="text-sm text-gray-600">Condition</dt>
             <dd class="font-semibold"><%= @collection_card.condition.titleize %></dd>
@@ -104,7 +113,7 @@
           <% if @collection_card.price_paid %>
             <div>
               <dt class="text-sm text-gray-600">Price Paid</dt>
-              <dd class="font-semibold text-green-600">$<%= number_with_precision(@collection_card.price_paid, precision: 2) %></dd>
+              <dd class="font-semibold text-green-600">€<%= number_with_precision(@collection_card.price_paid, precision: 2) %></dd>
             </div>
           <% end %>
           <% if @collection_card.acquired_at %>
