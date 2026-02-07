@@ -2,7 +2,7 @@
 
 <div class="max-w-6xl mx-auto mt-8 px-7 py-8">
   <div class="mb-6">
-    <%= link_to "← Back to #{@collection_card.collection.name}", collection_path(@collection_card.collection),
+    <%= link_to "Back to #{@collection_card.collection.name}", collection_path(@collection_card.collection),
         class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
   </div>
 
@@ -12,19 +12,33 @@
 
     <!-- Left: Card Image + Version Switcher -->
     <div class="lg:col-span-1 space-y-4">
-      <% if @collection_card.card.image_url.present? %>
-        <%= image_tag @collection_card.card.image_url,
-            alt: @collection_card.card.name,
-            class: "w-full rounded-xl shadow-xl",
-            data: { card_preview_target: "image" } %>
-      <% else %>
-        <div class="w-full aspect-[5/7] bg-gray-200 rounded-xl shadow-xl flex items-center justify-center">
-          <div class="text-center p-4">
-            <p class="text-gray-500 text-lg font-semibold"><%= @collection_card.card.name %></p>
-            <p class="text-gray-400 text-sm mt-2">No image available</p>
+
+    <div data-controller="card-flip"
+          data-card-flip-front-value="<%= @collection_card.card.image_url %>"
+          data-card-flip-back-value="<%= @collection_card.card.back_image_url %>">
+
+        <% if @collection_card.card.image_url.present? %>
+          <%= image_tag @collection_card.card.image_url,
+              alt: @collection_card.card.name,
+              class: "w-full rounded-xl shadow-xl",
+              data: { card_preview_target: "image", card_flip_target: "image" } %>
+        <% else %>
+          <div class="w-full aspect-[5/7] bg-gray-200 rounded-xl shadow-xl flex items-center justify-center">
+            <div class="text-center p-4">
+              <p class="text-gray-500 text-lg font-semibold"><%= @collection_card.card.name %></p>
+              <p class="text-gray-400 text-sm mt-2">No image available</p>
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+
+        <% if @collection_card.card.back_image_url.present? %>
+          <button data-card-flip-target="button"
+                  data-action="click->card-flip#flip"
+                  class="w-full mt-3 py-2 bg-umber hover:bg-golden-brown text-white text-sm font-semibold rounded-xl transition-colors cursor-pointer">
+            Show Back
+          </button>
+        <% end %>
+      </div>
 
       <% if @all_printings && @all_printings.size > 1 %>
         <div class="bg-white border-2 border-gray-200 rounded-xl p-4">

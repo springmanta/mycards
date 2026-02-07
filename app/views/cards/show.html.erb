@@ -16,19 +16,34 @@
 
     <!-- Left: Card Image + Form -->
     <div class="lg:col-span-1 space-y-4">
-      <% if @card.image_uri.present? %>
-        <%= image_tag @card.image_uri,
-            alt: @card.name,
-            class: "w-full rounded-xl shadow-xl",
-            data: { card_preview_target: "image" } %>
-      <% else %>
-        <div class="w-full aspect-[5/7] bg-gray-200 rounded-3xl shadow-xl flex items-center justify-center">
-          <div class="text-center p-4">
-            <p class="text-gray-500 text-lg font-semibold"><%= @card.name %></p>
-            <p class="text-gray-400 text-sm mt-2">No image available</p>
+
+      <!-- Card Image + Flip -->
+      <div data-controller="card-flip"
+          data-card-flip-front-value="<%= @card.image_uri %>"
+          data-card-flip-back-value="<%= @card.back_image_uri %>">
+
+        <% if @card.image_uri.present? %>
+          <%= image_tag @card.image_uri,
+              alt: @card.name,
+              class: "w-full rounded-xl shadow-xl",
+              data: { card_preview_target: "image", card_flip_target: "image" } %>
+        <% else %>
+          <div class="w-full aspect-[5/7] bg-gray-200 rounded-3xl shadow-xl flex items-center justify-center">
+            <div class="text-center p-4">
+              <p class="text-gray-500 text-lg font-semibold"><%= @card.name %></p>
+              <p class="text-gray-400 text-sm mt-2">No image available</p>
+            </div>
           </div>
-        </div>
-      <% end %>
+        <% end %>
+
+        <% if @card.back_image_uri.present? %>
+          <button data-card-flip-target="button"
+                  data-action="click->card-flip#flip"
+                  class="w-full mt-3 py-2 bg-umber hover:bg-golden-brown text-white text-sm rounded-xl transition-colors cursor-pointer">
+            Show Back
+          </button>
+        <% end %>
+      </div>
 
       <!-- Version Switcher -->
       <% if @all_printings.size > 1 %>
