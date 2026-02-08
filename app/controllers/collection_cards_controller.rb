@@ -145,7 +145,7 @@ class CollectionCardsController < ApplicationController
     @collection_card.collection ||= Current.user.ensure_collection
 
     if @collection_card.save
-      redirect_to collection_cards_path, notice: "#{@card.name} added to your collection."
+      redirect_to collection_path(@collection_card.collection), notice: "#{@card.name} added to #{@collection_card.collection.name}!"
     else
       @collections = Current.user.collections
       redirect_to card_path(@bulk_card), alert: "Could not add card to collection."
@@ -187,7 +187,7 @@ class CollectionCardsController < ApplicationController
     @collection_card.collection ||= Current.user.ensure_collection
 
     if @collection_card.save
-      redirect_to collection_cards_path, notice: "#{@card.name} added to your collection."
+      redirect_to collection_path(@collection_card.collection), notice: "#{@card.name} added to #{@collection_card.collection.name}!"
     else
       @collections = Current.user.collections
       render :new, status: :unprocessable_entity
