@@ -1,3 +1,4 @@
+# lib/tasks/backfill.rake
 namespace :backfill do
   desc "Backfill back face images from bulk data (memory efficient)"
   task back_faces: :environment do
@@ -40,7 +41,7 @@ namespace :backfill do
     puts "📥 Downloading to temp file..."
 
     # Stream to temp file instead of loading into memory
-    tmpfile = Tempfile.new(['scryfall', '.json'])
+    tmpfile = Tempfile.new(['scryfall', '.json'], encoding: 'ascii-8bit')
     http2 = Net::HTTP.new(download_uri.host, download_uri.port)
     http2.use_ssl = true
     http2.verify_mode = OpenSSL::SSL::VERIFY_NONE
@@ -51,7 +52,7 @@ namespace :backfill do
         tmpfile.write(chunk)
       end
     end
-    tmpfile.rewind
+    tmpfile.close
 
     puts "Processing file..."
 
@@ -62,58 +63,59 @@ namespace :backfill do
     depth = 0
 
     # Parse JSON objects one at a time instead of loading entire array
-    tmpfile.each_char do |char|
-      if char == '{'
-        in_object = true if depth == 0
-        depth += 1
-      end
+    File.open(tmpfile.path, 'r:UTF-8') do |file|
+      file.each_char do |char|
+        if char == '{'
+          in_object = true if depth == 0
+          depth += 1
+        end
 
-      buffer << char if in_object
+        buffer << char if in_object
 
-      if char == '}'
-        depth -= 1
-        if depth == 0 && in_object
-          in_object = false
+        if char == '}'
+          depth -= 1
+          if depth == 0 && in_object
+            in_object = false
 
-          begin
-            card = JSON.parse(buffer)
+            begin
+              card = JSON.parse(buffer)
 
-            if target_ids.include?(card["id"])
-              faces = card["card_faces"]
-              if faces&.length&.>= 2
-                back_image = faces[1].dig("image_uris", "normal")
-                front_image = faces[0].dig("image_uris", "normal")
+              if target_ids.include?(card["id"])
+                faces = card["card_faces"]
+                if faces&.length&.>= 2
+                  back_image = faces[1].dig("image_uris", "normal")
+                  front_image = faces[0].dig("image_uris", "normal")
 
-                bulk_card = BulkCard.find_by(scryfall_id: card["id"])
-                if bulk_card
-                  updates = {}
-                  updates[:back_image_uri] = back_image if back_image && bulk_card.back_image_uri.nil?
-                  if bulk_card.image_uri.nil? && front_image
-                    updates[:image_uri] = front_image
-                    front_fixed += 1
-                  end
+                  bulk_card = BulkCard.find_by(scryfall_id: card["id"])
+                  if bulk_card
+                    updates = {}
+                    updates[:back_image_uri] = back_image if back_image && bulk_card.back_image_uri.nil?
+                    if bulk_card.image_uri.nil? && front_image
+                      updates[:image_uri] = front_image
+                      front_fixed += 1
+                    end
 
-                  if updates.any?
-                    bulk_card.update_columns(updates)
-                    updated += 1
+                    if updates.any?
+                      bulk_card.update_columns(updates)
+                      updated += 1
+                    end
                   end
                 end
               end
+            rescue JSON::ParserError
+              # skip malformed objects
             end
-          rescue JSON::ParserError
-            # skip malformed objects
-          end
 
-          buffer = ""
-          print "\rUpdated: #{updated} | Front fixed: #{front_fixed}"
+            buffer = ""
+            print "\rUpdated: #{updated} | Front fixed: #{front_fixed}"
+          end
         end
       end
     end
 
-    tmpfile.close
     tmpfile.unlink
-
     GC.start
+
     puts "\n✅ Done! Updated #{updated} double-faced cards, fixed #{front_fixed} missing front images."
   end
 end
