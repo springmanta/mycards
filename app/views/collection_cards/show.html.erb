@@ -11,7 +11,7 @@
       <% if @collection_card.card.image_url.present? %>
         <%= image_tag @collection_card.card.image_url,
             alt: @collection_card.card.name,
-            class: "w-full rounded-xl shadow-xl",
+            class: "w-full rounded-2xl shadow-xl",
             data: { card_flip_target: "image" } %>
       <% end %>
 

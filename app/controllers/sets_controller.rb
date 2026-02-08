@@ -2,7 +2,9 @@ class SetsController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    @sets = MagicSet.joins(:bulk_cards).distinct
+    @sets = MagicSet.where(
+      "EXISTS (SELECT 1 FROM bulk_cards WHERE bulk_cards.set_code = magic_sets.code)"
+    )
 
     # Search by name
     if params[:q].present?
