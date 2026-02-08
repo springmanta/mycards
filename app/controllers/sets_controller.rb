@@ -2,7 +2,9 @@ class SetsController < ApplicationController
   allow_unauthenticated_access
 
   def index
-    @sets = MagicSet.joins(:bulk_cards).distinct
+    @sets = MagicSet.where(
+      "EXISTS (SELECT 1 FROM bulk_cards WHERE bulk_cards.set_code = magic_sets.code)"
+    )
 
     # Search by name
     if params[:q].present?
@@ -16,11 +18,11 @@ class SetsController < ApplicationController
 
     # Sorting - always apply, regardless of filters
     @sets = case params[:sort]
-      when 'name_desc'
+      when "name_desc"
         @sets.order(name: :desc)
-      when 'released_asc'
-        @sets.order(Arel.sql('released_at ASC NULLS LAST, name ASC'))
-      when 'released_desc'
+      when "released_asc"
+        @sets.order(Arel.sql("released_at ASC NULLS LAST, name ASC"))
+      when "released_desc"
         @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
       else
         @sets.order('magic_sets.name ASC') # Default A-Z

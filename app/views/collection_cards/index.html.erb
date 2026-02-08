@@ -2,7 +2,7 @@
 <div class="max-w-7xl mx-auto px-4 py-8">
   <div class="mb-8 flex justify-between items-center">
     <div>
-      <h1 class="text-3xl font-display font-bold mb-2"><%= @collection.name %></h1>
+      <h1 class="text-3xl font-display font-bold mb-2">All myCards</h1>
       <p class="text-gray-600 font-bold"><%= @collection_cards.sum(&:quantity) %> total cards</p>
       <p class="text-gray-600">Collection value</p>
       <div>
@@ -212,7 +212,7 @@
                 <div class="relative">
                   <%= image_tag collection_card.card.image_url,
                       alt: collection_card.card.name,
-                      class: "w-full rounded transition-all group-hover:brightness-75 cursor-pointer" %>
+                      class: "w-full rounded-2xl transition-all group-hover:brightness-75 cursor-pointer" %>
                   <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center rounded-xl">
                     <span class="text-goldenrod text-md font-semibold">Details</span>
                   </div>
