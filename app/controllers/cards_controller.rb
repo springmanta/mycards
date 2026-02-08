@@ -21,8 +21,12 @@ class CardsController < ApplicationController
       return
     end
 
-    # Search local database instead of Scryfall API
-    cards = BulkCard.search_by_name(query).pluck(:name).uniq
+    cards = BulkCard
+      .where("LOWER(name) LIKE ?", "#{query.downcase}%")
+      .distinct
+      .order(:name)
+      .limit(10)
+      .pluck(:name)
 
     render json: { data: cards }
   end
