@@ -35,16 +35,32 @@ class CardsController < ApplicationController
       return
     end
 
-    # Search for cards - handle double-faced cards by searching just the front face
     search_name = @query.split(" // ").first.strip
 
-    # Search local BulkCard database - specify bulk_cards.name explicitly
     @cards = BulkCard.where("bulk_cards.name ILIKE ?", "%#{search_name}%")
                     .includes(:magic_set)
-                    .order('magic_sets.name', :collector_number)
+
+    # Filter by rarity
+    if params[:rarity].present?
+      @cards = @cards.where(rarity: params[:rarity])
+    end
+
+    # Filter by type
+    if params[:type].present?
+      @cards = @cards.where("bulk_cards.type_line ILIKE ?", "%#{params[:type]}%")
+    end
+
+    # Sorting
+    @cards = case params[:sort]
+    when "name_asc" then @cards.order("bulk_cards.name ASC")
+    when "name_desc" then @cards.order("bulk_cards.name DESC")
+    when "set_asc" then @cards.order("magic_sets.name ASC")
+    when "set_desc" then @cards.order("magic_sets.name DESC")
+    when "price_asc" then @cards.order("bulk_cards.eur_price ASC NULLS LAST")
+    when "price_desc" then @cards.order("bulk_cards.eur_price DESC NULLS LAST")
+    else @cards.order("magic_sets.name", :collector_number)
+    end
 
     @card_name = @cards.first&.name if @cards.any?
-
-    Rails.logger.info "Found #{@cards.length} printings for '#{search_name}'"
   end
 end
