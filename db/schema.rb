@@ -55,7 +55,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_02_07_173610) do
     t.jsonb "metadata", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "set_name"
     t.string "back_image_uri"
     t.index "lower((name)::text)", name: "index_bulk_cards_on_lower_name"
     t.index ["name"], name: "index_bulk_cards_on_name"

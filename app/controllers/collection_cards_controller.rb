@@ -1,12 +1,12 @@
 class CollectionCardsController < ApplicationController
-  before_action :set_card, only: [:new, :edit], if: -> { params[:scryfall_id].present? }
-  before_action :set_collection_card, only: [:show, :edit, :update, :destroy]
+  before_action :set_card, only: [ :new, :edit ], if: -> { params[:scryfall_id].present? }
+  before_action :set_collection_card, only: [ :show, :edit, :update, :destroy ]
 
   def index
     @collections = Current.user.collections.includes(collection_cards: :card)
     @collection_cards = @collections.flat_map(&:collection_cards)
     @collection = @collections.first
-    @view_mode = params[:view] || 'list'
+    @view_mode = params[:view] || "list"
 
     # Search by card name
     if params[:q].present?
@@ -25,21 +25,21 @@ class CollectionCardsController < ApplicationController
 
     # Sorting
     @collection_cards = case params[:sort]
-      when 'name_asc'
+    when "name_asc"
         @collection_cards.sort_by { |cc| cc.card.name }
-      when 'name_desc'
+    when "name_desc"
         @collection_cards.sort_by { |cc| cc.card.name }.reverse
-      when 'set_asc'
-        @collection_cards.sort_by { |cc| cc.card.set_name || '' }
-      when 'set_desc'
-        @collection_cards.sort_by { |cc| cc.card.set_name || '' }.reverse
-      when 'price_asc'
+    when "set_asc"
+        @collection_cards.sort_by { |cc| cc.card.set_name || "" }
+    when "set_desc"
+        @collection_cards.sort_by { |cc| cc.card.set_name || "" }.reverse
+    when "price_asc"
         @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }
-      when 'price_desc'
+    when "price_desc"
         @collection_cards.sort_by { |cc| cc.card.cardmarket_price || 0 }.reverse
-      else
+    else
         @collection_cards.sort_by(&:created_at).reverse # Most recent first by default
-      end
+    end
   end
 
   def show
@@ -60,7 +60,7 @@ class CollectionCardsController < ApplicationController
     if response.status == 200
       @all_printings = JSON.parse(response.body)["data"].reject { |p| p["digital"] }
     else
-      @all_printings = [@card_data]
+      @all_printings = [ @card_data ]
     end
   end
 
@@ -125,17 +125,18 @@ class CollectionCardsController < ApplicationController
         rarity: @bulk_card.rarity,
         mana_cost: @bulk_card.mana_cost,
         type_line: @bulk_card.type_line,
-        oracle_text: @bulk_card.metadata['oracle_text'],
-        flavor_text: @bulk_card.metadata['flavor_text'],
+        oracle_text: @bulk_card.metadata["oracle_text"],
+        flavor_text: @bulk_card.metadata["flavor_text"],
         image_url: @bulk_card.image_uri,
-        power: @bulk_card.metadata['power'],
-        toughness: @bulk_card.metadata['toughness'],
+        power: @bulk_card.metadata["power"],
+        toughness: @bulk_card.metadata["toughness"],
         cardmarket_price: @bulk_card.eur_price,
         back_image_url: @bulk_card.back_image_uri,
       )
       @card.save!
     end
 
+    @card.back_image_url = @bulk_card.back_image_uri
     @card.cardmarket_price = @bulk_card.eur_price
     @card.prices_updated_at = Time.current
     @card.save!
@@ -182,6 +183,7 @@ class CollectionCardsController < ApplicationController
 
     @card.save!
 
+    @card.back_image_url = @bulk_card.back_image_uri
     @collection_card = CollectionCard.new(collection_card_params)
     @collection_card.card = @card
     @collection_card.collection ||= Current.user.ensure_collection

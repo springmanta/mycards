@@ -1,7 +1,7 @@
 <%# app/views/collections/show.html.erb %>
 
 <div class="max-w-7xl mx-auto mt-8 px-7 py-8">
-  <div class="mb-8">
+  <div class="mb-4">
     <%= link_to "My Collections", collections_path,
         class: "text-white px-3 py-1 rounded-xl bg-goldenrod hover:bg-golden-brown hover:text-gray-100 font-semibold" %>
     <div class="flex items-center justify-between mt-4">
@@ -17,9 +17,9 @@
         <% if @collection.description.present? %>
           <p class="text-gray-500 mt-1 text-sm"><%= @collection.description %></p>
         <% end %>
-      </div>
       <%= link_to "Edit", edit_collection_path(@collection),
           class: "text-sm font-semibold text-gray-400 hover:text-umber transition-colors" %>
+      </div>
     </div>
   </div>
 
