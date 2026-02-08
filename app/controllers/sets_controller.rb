@@ -18,14 +18,14 @@ class SetsController < ApplicationController
 
     # Sorting - always apply, regardless of filters
     @sets = case params[:sort]
-      when "name_desc"
-        @sets.order(name: :desc)
-      when "released_asc"
-        @sets.order(Arel.sql("released_at ASC NULLS LAST, name ASC"))
-      when "released_desc"
-        @sets.order(Arel.sql('released_at DESC NULLS LAST, name ASC'))
-      else
-        @sets.order('magic_sets.name ASC') # Default A-Z
+    when "name_desc"
+      @sets.order(name: :desc)
+    when "released_asc"
+      @sets.order(Arel.sql("released_at ASC NULLS LAST, name ASC"))
+    when "released_desc"
+      @sets.order(Arel.sql("released_at DESC NULLS LAST, name ASC"))
+    else
+      @sets.order("magic_sets.name ASC") # Default A-Z
     end
 
     @pagy, @sets = pagy(:offset, @sets, limit: 30)
@@ -56,11 +56,11 @@ class SetsController < ApplicationController
 
     # Sorting
     @cards = case params[:sort]
-    when 'name_asc'
+    when "name_asc"
       @cards.order(name: :asc)
-    when 'name_desc'
+    when "name_desc"
       @cards.order(name: :desc)
-    when 'collector_desc'
+    when "collector_desc"
       @cards.order(collector_number: :desc)
     else
       @cards.order(Arel.sql("CAST(NULLIF(regexp_replace(collector_number, '[^0-9]', '', 'g'), '') AS INTEGER) ASC"))
@@ -68,24 +68,24 @@ class SetsController < ApplicationController
   end
 
   def autocomplete
-  query = params[:q]
+    query = params[:q]
 
-  if query.blank? || query.length < 2
-    render json: { data: [] }
-    return
+    if query.blank? || query.length < 2
+      render json: { data: [] }
+      return
+    end
+
+    sets = MagicSet.where("name ILIKE ?", "%#{query}%")
+                  .limit(10)
+                  .select(:code, :name, :icon_svg_uri)
+                  .map do |set|
+      {
+        code: set.code,
+        name: set.name,
+        icon_svg_uri: set.icon_svg_uri
+      }
+    end
+
+    render json: { data: sets }
   end
-
-  sets = MagicSet.where("name ILIKE ?", "%#{query}%")
-                 .limit(10)
-                 .select(:code, :name, :icon_svg_uri)
-                 .map do |set|
-    {
-      code: set.code,
-      name: set.name,
-      icon_svg_uri: set.icon_svg_uri
-    }
-  end
-
-  render json: { data: sets }
-end
 end
