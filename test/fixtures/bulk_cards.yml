@@ -1,23 +1,17 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  scryfall_id: MyString
-  name: MyString
-  set_code: MyString
-  collector_number: MyString
-  eur_price: 9.99
-  image_uri: MyString
-  rarity: MyString
-  type_line: MyString
-  mana_cost: MyString
+  name: Lightning Bolt
+  scryfall_id: test-scryfall-id-001
+  set_code: m21
+  rarity: common
+  type_line: Instant
+  collector_number: "1"
 
 two:
-  scryfall_id: MyString
-  name: MyString
-  set_code: MyString
-  collector_number: MyString
-  eur_price: 9.99
-  image_uri: MyString
-  rarity: MyString
-  type_line: MyString
-  mana_cost: MyString
+  name: Black Lotus
+  scryfall_id: test-scryfall-id-002
+  set_code: lea
+  rarity: rare
+  type_line: Artifact
+  collector_number: "2"

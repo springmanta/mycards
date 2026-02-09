@@ -70,3 +70,5 @@ gem "tailwindcss-rails", "~> 4.3"
 gem "faraday"
 
 gem "pagy"
+
+gem "google-cloud-vision", "~> 2.0"
