@@ -14,10 +14,10 @@
   <% if @collections.any? %>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <% @collections.each do |collection| %>
-        <div class="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-umber transition-colors"
+        <div class="bg-white shadow-xl border-2 border-gray-200 rounded-xl p-6 hover:border-umber transition-colors"
              data-controller="confirm">
           <%= link_to collection_path(collection), class: "block group" do %>
-            <h2 class="text-xl font-bold text-gray-900 group-hover:text-goldenrod transition-colors">
+            <h2 class="text-xl font-bold text-gray-900 hover:text-goldenrod transition-colors">
               <%= collection.name %>
             </h2>
 

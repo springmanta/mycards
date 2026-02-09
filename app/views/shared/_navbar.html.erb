@@ -16,6 +16,7 @@
         <% if Current.user %>
           <%= link_to "Collections", collections_path, class: "text-gray-200 font-sans hover:text-goldenrod transition-colors" %>
           <%= link_to "All myCards", collection_cards_path, class: "text-gray-200 font-sans hover:text-goldenrod transition-colors" %>
+          <%= link_to "Scan", new_scan_path, class: "text-gray-200 font-sans hover:text-goldenrod transition-colors" %>
         <% end %>
       </div>
 
