@@ -1,56 +1,106 @@
-<div class="max-w-xl mx-auto mt-4 px-4 py-4"
-    data-controller="card-scanner"
-    data-card-scanner-match-url-value="<%= match_cards_path %>">
-
-  <div class="mb-4">
-    <h1 class="text-3xl font-bold">Scan a Card</h1>
-    <p class="text-gray-600 text-sm mt-1">Point your camera at the card name.</p>
+<div class="max-w-xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold">Scan a Card</h1>
+    <p class="text-gray-600 mt-1">Take a photo of a Magic card to identify it.</p>
   </div>
 
-  <!-- Camera Feed -->
-  <div class="relative bg-black rounded-2xl overflow-hidden shadow-xl mb-4">
-    <video data-card-scanner-target="video"
-          autoplay playsinline muted
-          class="w-full rounded-2xl"></video>
+  <%= form_with url: scans_path, method: :post, multipart: true, id: "scan-form", class: "space-y-6" do |f| %>
+    <div class="bg-white border-2 border-gray-200 rounded-xl p-6">
+      <label class="block cursor-pointer">
+        <div id="preview-container" class="w-full aspect-[3/4] bg-gray-100 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+          <div id="placeholder" class="text-center p-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <p class="text-gray-500 font-semibold mt-2">Tap to take a photo</p>
+            <p class="text-gray-400 text-sm mt-1">or choose from gallery</p>
+          </div>
+          <img id="preview-image" class="hidden w-full h-full object-cover rounded-xl" />
+        </div>
 
-    <!-- Guide overlay - title region -->
-    <div class="absolute inset-0 pointer-events-none">
-      <!-- Darkened areas -->
-      <div class="absolute top-0 left-0 right-0 h-[5%] bg-black/40"></div>
-      <div class="absolute top-[20%] left-0 right-0 bottom-0 bg-black/40"></div>
-      <div class="absolute top-[5%] left-0 w-[10%] h-[15%] bg-black/40"></div>
-      <div class="absolute top-[5%] right-0 w-[10%] h-[15%] bg-black/40"></div>
-
-      <!-- Clear window with border -->
-      <div class="absolute top-[5%] left-[10%] right-[10%] h-[15%] border-2 border-goldenrod rounded-lg">
-        <span class="absolute -top-5 left-2 text-xs text-goldenrod font-semibold bg-black/60 px-2 py-0.5 rounded">
-          Card Name
-        </span>
-      </div>
+        <input type="file" id="image-input" name="image" accept="image/*" capture="environment" class="hidden" />
+      </label>
     </div>
-  </div>
 
-  <!-- Hidden canvas for processing -->
-  <canvas data-card-scanner-target="canvas" class="hidden"></canvas>
+    <!-- Hidden field for resized image -->
+    <input type="hidden" id="resized-image" name="image_data" />
 
-  <!-- Status -->
-  <div data-card-scanner-target="status"
-      class="text-center text-sm font-semibold text-gray-500 mb-4 transition-colors">
-    Starting camera...
-  </div>
-
-  <!-- Results -->
-  <div data-card-scanner-target="results" class="space-y-2"></div>
-
-  <!-- Fallback -->
-  <div class="mt-6 pt-4 border-t border-gray-200">
-    <p class="text-center text-sm text-gray-400 mb-3">Or search manually</p>
-    <%= form_with url: search_cards_path, method: :get, class: "flex gap-2" do |f| %>
-      <%= f.text_field :q,
-          placeholder: "Type card name...",
-          class: "flex-1 px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none text-sm" %>
-      <%= f.submit "Search",
-          class: "bg-umber hover:bg-golden-brown text-white px-4 py-2 rounded-xl font-semibold text-sm transition-colors cursor-pointer" %>
-    <% end %>
-  </div>
+    <button type="submit" id="submit-btn" disabled
+        class="w-full bg-umber hover:bg-golden-brown text-white py-3 rounded-xl font-semibold transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+      <span id="btn-text">Identify Card</span>
+      <span id="btn-loading" class="hidden">
+        <svg class="animate-spin inline h-5 w-5 mr-2" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+        </svg>
+        Identifying...
+      </span>
+    </button>
+  <% end %>
 </div>
+
+<script>
+  const input = document.getElementById('image-input');
+  const preview = document.getElementById('preview-image');
+  const placeholder = document.getElementById('placeholder');
+  const submitBtn = document.getElementById('submit-btn');
+  const form = document.getElementById('scan-form');
+  const btnText = document.getElementById('btn-text');
+  const btnLoading = document.getElementById('btn-loading');
+
+  input.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      preview.src = e.target.result;
+      preview.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      submitBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+
+    // Resize image
+    resizeImage(file, 1200, function(blob) {
+      // Replace the file input with resized version
+      const resizedFile = new File([blob], file.name, { type: 'image/jpeg' });
+      const dt = new DataTransfer();
+      dt.items.add(resizedFile);
+      input.files = dt.files;
+    });
+  });
+
+  form.addEventListener('submit', function() {
+    btnText.classList.add('hidden');
+    btnLoading.classList.remove('hidden');
+    submitBtn.disabled = true;
+  });
+
+  function resizeImage(file, maxWidth, callback) {
+    const img = new Image();
+    const canvas = document.createElement('canvas');
+
+    img.onload = function() {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(callback, 'image/jpeg', 0.85);
+    };
+
+    img.src = URL.createObjectURL(file);
+  }
+</script>
