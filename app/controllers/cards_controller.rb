@@ -1,5 +1,5 @@
 class CardsController < ApplicationController
-  allow_unauthenticated_access only: [:show, :autocomplete, :search]
+  allow_unauthenticated_access only: [ :show, :autocomplete, :search, :match ]
 
   def index
     @cards = Current.user.cards
@@ -66,5 +66,48 @@ class CardsController < ApplicationController
     end
 
     @card_name = @cards.first&.name if @cards.any?
+  end
+
+  def match
+    query = params[:name]&.strip
+
+    if query.blank? || query.length < 3
+      render json: { matches: [] }
+      return
+    end
+
+  # Clean up OCR artifacts
+  clean_name = query.gsub(/[^a-zA-Z\s',\-]/, '').strip
+
+  cards = BulkCard
+    .where("lower(name) LIKE ?", "#{clean_name.downcase}%")
+    .includes(:magic_set)
+    .select("DISTINCT ON (name) *")
+    .order(:name)
+    .limit(5)
+
+  # Fallback to contains if no prefix match
+  if cards.empty?
+    cards = BulkCard
+      .where("lower(name) LIKE ?", "%#{clean_name.downcase}%")
+      .includes(:magic_set)
+      .select("DISTINCT ON (name) *")
+      .order(:name)
+      .limit(5)
+  end
+
+  render json: {
+    matches: cards.map { |c|
+      {
+        id: c.id,
+        name: c.name,
+        set_name: c.magic_set&.name,
+        set_code: c.set_code,
+        rarity: c.rarity,
+        image_uri: c.image_uri,
+        url: card_path(c)
+      }
+    }
+  }
   end
 end
