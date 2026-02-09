@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   resources :cards do
     collection do
       get :search
+      get "cards/match", to: "cards#match", as: :match_cards
     end
   end
 end
