@@ -26,11 +26,11 @@ Rails.application.routes.draw do
   resources :scans, only: [ :new, :create ]
 
   get "cards/autocomplete", to: "cards#autocomplete"
+  get "cards/match", to: "cards#match", as: :match_cards
 
   resources :cards do
     collection do
       get :search
-      get "cards/match", to: "cards#match", as: :match_cards
     end
   end
 end
