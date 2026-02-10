@@ -1,0 +1,68 @@
+<div class="max-w-2xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold">Import Results</h1>
+    <p class="text-gray-600 mt-1">
+      <%= @results[:matched].size %> added ·
+      <%= @results[:duplicates].size %> updated ·
+      <%= @results[:unmatched].size %> not found
+    </p>
+  </div>
+
+  <% if @results[:matched].any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-green-700 mb-3">✓ Added (<%= @results[:matched].size %>)</h2>
+      <div class="space-y-2">
+        <% @results[:matched].each do |result| %>
+          <div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-200">
+            <% if result[:card].image_url.present? %>
+              <%= image_tag result[:card].image_url, class: "w-12 rounded-lg shadow", loading: "lazy" %>
+            <% end %>
+            <div class="flex-1 min-w-0">
+              <p class="font-bold text-gray-900 truncate"><%= result[:card].name %></p>
+              <p class="text-sm text-gray-500">×<%= result[:quantity] %> · <%= result[:card].set_name %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @results[:duplicates].any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-blue-700 mb-3">↑ Updated quantity (<%= @results[:duplicates].size %>)</h2>
+      <div class="space-y-2">
+        <% @results[:duplicates].each do |result| %>
+          <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-xl border border-blue-200">
+            <div class="flex-1 min-w-0">
+              <p class="font-bold text-gray-900 truncate"><%= result[:card].name %></p>
+              <p class="text-sm text-gray-500">+<%= result[:quantity] %> added to existing</p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @results[:unmatched].any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-red-700 mb-3">✗ Not found (<%= @results[:unmatched].size %>)</h2>
+      <div class="space-y-2">
+        <% @results[:unmatched].each do |result| %>
+          <div class="p-3 bg-red-50 rounded-xl border border-red-200">
+            <p class="text-sm font-mono text-gray-700"><%= result[:line] %></p>
+            <% if result[:parsed] %>
+              <p class="text-xs text-red-500 mt-1">Searched for: "<%= result[:parsed][:name] %>" in set <%= result[:parsed][:set_code]&.upcase %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="flex gap-3 mt-6">
+    <%= link_to "View Import / Export", collection_path(@collection),
+        class: "flex-1 text-center bg-umber hover:bg-golden-brown text-white py-3 rounded-xl font-semibold transition-colors" %>
+    <%= link_to "Import More", new_import_path,
+        class: "flex-1 text-center border-2 border-gray-200 hover:border-umber text-gray-700 py-3 rounded-xl font-semibold transition-colors" %>
+  </div>
+</div>
