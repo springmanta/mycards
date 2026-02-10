@@ -23,6 +23,13 @@ class CollectionCardsController < ApplicationController
       @collection_cards = @collection_cards.select { |cc| cc.card.type_line&.include?(params[:type]) }
     end
 
+    if params[:colors].present?
+      selected_colors = Array(params[:colors])
+      @collection_cards = @collection_cards.select do |cc|
+        card_colors = cc.card.colors.to_s.split(",")
+        selected_colors.all? { |c| card_colors.include?(c) }
+      end
+    end
     # Sorting
     @collection_cards = case params[:sort]
     when "name_asc"
@@ -124,6 +131,7 @@ class CollectionCardsController < ApplicationController
         set_code: @bulk_card.set_code,
         rarity: @bulk_card.rarity,
         mana_cost: @bulk_card.mana_cost,
+        colors: Array(@bulk_card.metadata["colors"]).join(","),
         type_line: @bulk_card.type_line,
         oracle_text: @bulk_card.metadata["oracle_text"],
         flavor_text: @bulk_card.metadata["flavor_text"],

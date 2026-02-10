@@ -15,7 +15,7 @@
        }.to_json %>">
 
     <!-- Left: Card Image + Form -->
-    <div class="lg:col-span-1 space-y-4">
+    <div class="lg:col-span-1 space-y-4 max-w-xs mx-auto lg:max-w-none">
 
       <!-- Card Image + Flip -->
       <div data-controller="card-flip"
@@ -107,7 +107,7 @@
     <div class="lg:col-span-2 space-y-6">
       <!-- Title and Set Info -->
       <div>
-        <h1 class="text-4xl font-bold mb-3"><%= @card.name %></h1>
+      <h1 class="text-2xl lg:text-4xl font-bold mb-3"><%= @card.name %></h1>
         <div class="flex flex-wrap gap-2">
           <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
             <%= link_to @card.magic_set.name, set_path(@card.set_code), class: "hover:text-umber" %>

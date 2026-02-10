@@ -6,6 +6,11 @@
       <%= @results[:duplicates].size %> updated ·
       <%= @results[:unmatched].size %> not found
     </p>
+
+    <div class="mb-6">
+      <%= link_to "Go to #{@collection.name}", collection_path(@collection),
+          class: "bg-goldenrod hover:bg-golden-brown text-white font-semibold px-4 py-2 rounded-xl transition-colors" %>
+    </div>
   </div>
 
   <% if @results[:matched].any? %>
