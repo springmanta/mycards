@@ -28,7 +28,7 @@
     <div class="lg:col-span-2 space-y-6">
       <!-- Title and Set Info -->
       <div>
-        <h1 class="text-4xl font-bold mb-3"><%= @collection_card.card.name %></h1>
+        <h1 class="text-2xl lg:text-4xl font-bold mb-3"><%= @collection_card.card.name %></h1>
         <div class="flex flex-wrap gap-2">
           <span class="px-3 py-1 bg-gray-100 rounded-full text-sm font-semibold">
             <%= link_to @collection_card.card.set_name, set_path(@collection_card.card.set_code), class: "hover:text-umber" %>

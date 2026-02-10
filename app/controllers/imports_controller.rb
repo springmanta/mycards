@@ -13,7 +13,10 @@ class ImportsController < ApplicationController
     lines = text.split("\n").map(&:strip).reject(&:blank?)
 
     # Create or find "Imported" collection
-    @collection = Current.user.collections.find_or_create_by!(name: "Import / Export")
+    base_name = "Import"
+    existing_count = Current.user.collections.where("name LIKE ?", "#{base_name}%").count
+    collection_name = existing_count == 0 ? base_name : "#{base_name} #{existing_count + 1}"
+    @collection = Current.user.collections.create!(name: collection_name)
 
     @results = { matched: [], unmatched: [], duplicates: [] }
 
@@ -31,8 +34,10 @@ class ImportsController < ApplicationController
         card.assign_attributes(
           name: bulk_card.name,
           set_name: bulk_card.magic_set&.name,
+          set_code: bulk_card.set_code,
           rarity: bulk_card.rarity,
           mana_cost: bulk_card.mana_cost,
+          colors: Array(bulk_card.metadata["colors"]).join(","),
           type_line: bulk_card.type_line,
           oracle_text: bulk_card.metadata["oracle_text"],
           image_url: bulk_card.image_uri,
@@ -60,7 +65,7 @@ class ImportsController < ApplicationController
       end
     end
 
-    render :create
+    redirect_to collection_path(@collection), notice: "Imported #{@results[:matched].size + @results[:duplicates].size} cards. Created collection '#{@collection.name}'"
   end
 
   private

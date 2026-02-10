@@ -42,7 +42,7 @@
               class: "text-xs font-semibold text-gray-400 mt-3 hover:text-umber transition-colors cursor-pointer" %>
             <button data-action="click->confirm#show"
                     class="text-xs font-semibold text-gray-400 mt-3 hover:text-umber transition-colors cursor-pointer">
-              Remove
+              Delete
             </button>
           </div>
 
@@ -53,13 +53,14 @@
             <div class="bg-white rounded-xl p-6 max-w-sm mx-4 shadow-2xl"
                  data-action="click->confirm#stopPropagation">
               <h3 class="text-xl font-bold mb-2 text-goldenrod">Remove Collection?</h3>
-              <p class="text-gray-600 text-sm mb-6">Remove <strong><%= collection.name %></strong>?</p>
+              <p class="text-gray-600 text-sm mb-6">
+                Delete <strong><%= collection.name %></strong>?</p>
               <div class="flex gap-3">
                 <button data-action="click->confirm#cancel"
                         class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-semibold hover:bg-gray-300 cursor-pointer">
                   Cancel
                 </button>
-                <%= button_to "Remove", collection_path(collection),
+                <%= button_to "Delete", collection_path(collection),
                     method: :delete,
                     class: "flex-1 bg-coffee text-sm text-white p-3 rounded-lg font-semibold hover:bg-violet cursor-pointer" %>
               </div>

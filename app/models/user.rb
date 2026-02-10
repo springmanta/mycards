@@ -9,6 +9,13 @@ class User < ApplicationRecord
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 
   def ensure_collection
-    collections.first || collections.create!(name: "My Collection")
+    base_name = "My Collection"
+    existing_count = collections.where("name LIKE ?", "#{base_name}%").count
+
+    if existing_count == 0
+      collections.create!(name: base_name)
+    else
+      collections.create!(name: "#{base_name} #{existing_count + 1}")
+    end
   end
 end
