@@ -1,0 +1,30 @@
+<div class="max-w-2xl mx-auto mt-8 px-7 py-8">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold">Import Cards</h1>
+    <p class="text-gray-600 mt-1">Paste your card list below. Cards will be added to your "Import / Export" collection.</p>
+  </div>
+
+  <div class="bg-white border-2 border-gray-200 rounded-xl p-6 mb-6">
+    <h3 class="font-bold text-gray-900 mb-2">Supported format</h3>
+    <p class="text-sm text-gray-500 mb-3">One card per line:</p>
+    <code class="block bg-gray-100 rounded-lg p-3 text-sm text-gray-700">
+      QUANTITY Name (SET) CollectorNumber *F*<br>
+      <span class="text-gray-400">Examples:</span><br>
+      1 Lightning Bolt (M21) 197<br>
+      2 Sol Ring (C21) 263 *F*
+    </code>
+    <p class="text-xs text-gray-400 mt-2">*F* at the end marks foil cards (optional). Works with Moxfield export format.</p>
+  </div>
+
+  <%= form_with url: imports_path, method: :post, class: "space-y-6" do |f| %>
+    <div>
+      <%= f.text_area :card_list,
+          rows: 15,
+          placeholder: "1 Rograkh, Son of Rohgahh (CMR) 197\n1 Thrasios, Triton Hero (C16) 46 *F*\n1 Ancient Tomb (TMP) 315",
+          class: "w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-umber focus:outline-none text-sm font-mono resize-y" %>
+    </div>
+
+    <%= f.submit "Import Cards",
+        class: "w-full bg-umber hover:bg-golden-brown text-white py-3 rounded-xl font-semibold transition-colors cursor-pointer" %>
+  <% end %>
+</div>

@@ -24,6 +24,7 @@ Rails.application.routes.draw do
     end
   end
   resources :scans, only: [ :new, :create ]
+  resources :imports, only: [:new, :create]
 
   get "cards/autocomplete", to: "cards#autocomplete"
   get "cards/match", to: "cards#match", as: :match_cards
