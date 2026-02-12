@@ -102,8 +102,38 @@ class CollectionCardsController < ApplicationController
   end
 
   def update
-    if @collection_card.update(collection_card_params)
-      redirect_to collection_cards_path, notice: "#{@collection_card.card.name} updated successfully!"
+    # Handle version change
+    if params[:collection_card][:scryfall_id].present? &&
+      params[:collection_card][:scryfall_id] != @collection_card.card.scryfall_id
+
+      new_scryfall_id = params[:collection_card][:scryfall_id]
+      bulk_card = BulkCard.find_by(scryfall_id: new_scryfall_id)
+
+      if bulk_card
+        new_card = Card.find_or_initialize_by(scryfall_id: new_scryfall_id)
+        if new_card.new_record?
+          new_card.assign_attributes(
+            name: bulk_card.name,
+            set_name: bulk_card.magic_set&.name,
+            set_code: bulk_card.set_code,
+            rarity: bulk_card.rarity,
+            mana_cost: bulk_card.mana_cost,
+            type_line: bulk_card.type_line,
+            oracle_text: bulk_card.metadata["oracle_text"],
+            image_url: bulk_card.image_uri,
+            back_image_url: bulk_card.back_image_uri,
+            cardmarket_price: bulk_card.eur_price,
+            colors: Array(bulk_card.metadata["colors"]).join(","),
+            prices_updated_at: Time.current
+          )
+          new_card.save!
+        end
+        @collection_card.card = new_card
+      end
+    end
+
+    if @collection_card.update(collection_card_params.except(:scryfall_id))
+      redirect_to collection_path(@collection_card.collection), notice: "#{@collection_card.card.name} updated successfully!"
     else
       @collections = Current.user.collections
       render :edit, status: :unprocessable_entity
@@ -215,6 +245,6 @@ class CollectionCardsController < ApplicationController
   end
 
   def collection_card_params
-    params.require(:collection_card).permit(:collection_id, :quantity, :condition, :foil, :price_paid, :acquired_at, :bulk_card_id)
+    params.require(:collection_card).permit(:collection_id, :quantity, :condition, :foil, :price_paid, :acquired_at, :bulk_card_id, :scryfall_id)
   end
 end
