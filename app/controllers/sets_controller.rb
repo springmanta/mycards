@@ -49,9 +49,11 @@ class SetsController < ApplicationController
     if params[:type].present?
       @cards = @cards.where("type_line ILIKE ?", "%#{params[:type]}%")
     end
+
     # Filter by color
-    if params[:color].present?
-      @cards = @cards.where("metadata -> 'colors' @> ?", "[\"#{params[:color]}\"]")
+    if params[:colors].present?
+      selected_colors = Array(params[:colors])
+      @cards = @cards.where("bulk_cards.metadata @> ?", { colors: selected_colors }.to_json)
     end
 
     # Sorting
