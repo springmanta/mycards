@@ -23,6 +23,10 @@ module Authentication
 
     def resume_session
       Current.session ||= find_session_by_cookie
+    rescue => e
+      Rails.logger.error "Session resume failed: #{e.message}"
+      Rails.logger.error e.backtrace.join("\n")
+      nil
     end
 
     def current_user
@@ -34,7 +38,25 @@ module Authentication
     end
 
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      return nil unless cookies.signed[:session_id]
+      
+      begin
+        session_id = cookies.signed[:session_id]
+        Rails.logger.info "Attempting to find session with ID: #{session_id}"
+        found_session = Session.find_by(id: session_id)
+        
+        if found_session
+          Rails.logger.info "Session found for user: #{found_session.user.email_address}"
+        else
+          Rails.logger.warn "No session found for ID: #{session_id}"
+        end
+        
+        found_session
+      rescue => e
+        Rails.logger.error "Session lookup failed: #{e.message}"
+        Rails.logger.error e.backtrace.join("\n")
+        nil
+      end
     end
 
     def request_authentication
@@ -47,9 +69,32 @@ module Authentication
     end
 
     def start_new_session_for(user)
+      Rails.logger.info "Creating new session for user: #{user.email_address}"
+      Rails.logger.info "User agent: #{request.user_agent}"
+      Rails.logger.info "IP address: #{request.remote_ip}"
+      
       user.sessions.create!(user_agent: request.user_agent, ip_address: request.remote_ip).tap do |session|
         Current.session = session
-        cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
+        cookie_options = {
+          value: session.id, 
+          httponly: true
+        }
+        
+        # Use appropriate SameSite policy based on environment
+        if Rails.env.production?
+          cookie_options.merge!({
+            same_site: :none,
+            secure: true
+          })
+        else
+          cookie_options.merge!({
+            same_site: :lax
+          })
+        end
+        
+        Rails.logger.info "Setting session cookie with options: #{cookie_options}"
+        cookies.signed.permanent[:session_id] = cookie_options
+        Rails.logger.info "Session created with ID: #{session.id}"
       end
     end
 
